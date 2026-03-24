@@ -1,0 +1,38 @@
+﻿
+            <html xmlns:o="urn:schemas-microsoft-com:office:office" 
+                  xmlns:w="urn:schemas-microsoft-com:office:word" 
+                  xmlns="http://www.w3.org/TR/REC-html40">
+            <head>
+                <meta charset="utf-8">
+                <title>LARGEST ELEMENT IN ARRAY</title>
+                <!--[if gte mso 9]>
+                <xml>
+                    <w:WordDocument>
+                        <w:View>Print</w:View>
+                        <w:Zoom>100</w:Zoom>
+                    </w:WordDocument>
+                </xml>
+                <![endif]-->
+                <style>
+                    @page {
+                        size: 8.5in 11in;
+                        margin: 1in;
+                    }
+                    body {
+                        font-family: Arial, sans-serif;
+                        font-size: 12pt;
+                        line-height: 1.5;
+                    }
+                    h1 { font-size: 24pt; }
+                    h2 { font-size: 18pt; }
+                    h3 { font-size: 14pt; }
+                    table { border-collapse: collapse; width: 100%; }
+                    th, td { border: 1px solid #000; padding: 8px; }
+                    th { background-color: #f0f0f0; }
+                </style>
+            </head>
+            <body>
+                <p>#include&lt;stdio.h&gt;</p><p>int main()</p><p>{</p><p> int i ,n, lar;</p><p> printf("enter number of elements\n");</p><p> scanf("%d",&amp;n);</p><p> int arr[n];</p><p> printf("enter array elements\n",n);</p><p> for(i=0;i&lt;n;i++)</p><p> {</p><p> scanf("%d",&amp;arr[i]);</p><p> }</p><p> lar==arr[0];</p><p> {</p><p>     for (i=0;i&lt;=n;i++)</p><p>     {</p><p> if(arr[i]&gt;lar)</p><p> {</p><p> lar=arr[i];</p><p> }</p><p>     }</p><p> printf("the largest element is:%d",lar);</p><p> return 0;</p><p> }</p><p> </p><p>}</p><p><br></p>
+            </body>
+            </html>
+        
