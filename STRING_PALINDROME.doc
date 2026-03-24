@@ -1,0 +1,38 @@
+﻿
+            <html xmlns:o="urn:schemas-microsoft-com:office:office" 
+                  xmlns:w="urn:schemas-microsoft-com:office:word" 
+                  xmlns="http://www.w3.org/TR/REC-html40">
+            <head>
+                <meta charset="utf-8">
+                <title>STRING PALINDROME</title>
+                <!--[if gte mso 9]>
+                <xml>
+                    <w:WordDocument>
+                        <w:View>Print</w:View>
+                        <w:Zoom>100</w:Zoom>
+                    </w:WordDocument>
+                </xml>
+                <![endif]-->
+                <style>
+                    @page {
+                        size: 8.5in 11in;
+                        margin: 1in;
+                    }
+                    body {
+                        font-family: Arial, sans-serif;
+                        font-size: 12pt;
+                        line-height: 1.5;
+                    }
+                    h1 { font-size: 24pt; }
+                    h2 { font-size: 18pt; }
+                    h3 { font-size: 14pt; }
+                    table { border-collapse: collapse; width: 100%; }
+                    th, td { border: 1px solid #000; padding: 8px; }
+                    th { background-color: #f0f0f0; }
+                </style>
+            </head>
+            <body>
+                <p>#include&lt;stdio.h&gt;</p><p>#include&lt;string.h&gt;</p><p>int main()</p><p>{</p><p>    char s[50],t[50];</p><p>    int i,j,d;</p><p>    printf("enter a string\n");</p><p>    fgets(s,sizeof(s),stdin);</p><p>    i=0;</p><p>    j=strlen(s)-1;</p><p>    while(j&gt;=0)</p><p>    {</p><p>        t[i]=s[j];</p><p>        i++;</p><p>        j--;</p><p>    }</p><p>    t[i]='\0';</p><p>    d=strcmp(s,t);</p><p>if(d==0)</p><p><br></p><p>    printf("\n The given string is palindrome");</p><p><br></p><p>else</p><p><br></p><p>    printf("\n The given string is not palindrome ");</p><p><br></p><p>return 0;</p><p>}</p><p><br></p>
+            </body>
+            </html>
+        
