@@ -1,0 +1,58 @@
+﻿
+            <html xmlns:o="urn:schemas-microsoft-com:office:office" 
+                  xmlns:w="urn:schemas-microsoft-com:office:word" 
+                  xmlns="http://www.w3.org/TR/REC-html40">
+            <head>
+                <meta charset="utf-8">
+                <title>CONSONANT OR VOWEL</title>
+                <!--[if gte mso 9]>
+                <xml>
+                    <w:WordDocument>
+                        <w:View>Print</w:View>
+                        <w:Zoom>100</w:Zoom>
+                    </w:WordDocument>
+                </xml>
+                <![endif]-->
+                <style>
+                    @page {
+                        size: 8.5in 11in;
+                        margin: 1in;
+                    }
+                    body {
+                        font-family: Arial, sans-serif;
+                        font-size: 12pt;
+                        line-height: 1.5;
+                    }
+                    h1 { font-size: 24pt; }
+                    h2 { font-size: 18pt; }
+                    h3 { font-size: 14pt; }
+                    table { border-collapse: collapse; width: 100%; }
+                    th, td { border: 1px solid #000; padding: 8px; }
+                    th { background-color: #f0f0f0; }
+                </style>
+            </head>
+            <body>
+                <p>#include &lt;stdio.h&gt;
+</p><p>int main() {
+</p><p>    char c;
+</p><p>    int lowercase_vowel, uppercase_vowel;
+</p><p>    printf("Enter an alphabet: ");
+</p><p>    scanf("%c", &amp;c);
+</p><p>
+</p><p>    // evaluates to 1 if variable c is a lowercase vowel
+</p><p>    lowercase_vowel = (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u');
+</p><p>
+</p><p>    // evaluates to 1 if variable c is a uppercase vowel
+</p><p>    uppercase_vowel = (c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U');
+</p><p>
+</p><p>    // evaluates to 1 (true) if c is a vowel
+</p><p>    if (lowercase_vowel || uppercase_vowel)
+</p><p>        printf("%c is a vowel.", c);
+</p><p>    else
+</p><p>        printf("%c is a consonant.", c);
+</p><p>    return 0;
+</p><p>}
+</p><p><br></p>
+            </body>
+            </html>
+        
