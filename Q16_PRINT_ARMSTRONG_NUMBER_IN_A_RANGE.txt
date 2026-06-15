@@ -1,0 +1,31 @@
+﻿#include <stdio.h>
+#include <math.h>
+
+int main() {
+    int low, high, i, temp, remainder, digits, sum;
+
+    printf("Enter lower and upper limits: ");
+    scanf("%d %d", &low, &high);
+
+    printf("Armstrong numbers: ");
+    for (i = low; i <= high; i++) {
+        sum = 0;
+        temp = i;
+
+        // Count number of digits
+        digits = (i == 0) ? 1 : (int)log10(i) + 1;
+
+        // Calculate sum of digits raised to power
+        while (temp > 0) {
+            remainder = temp % 10;
+            sum += round(pow(remainder, digits));
+            temp /= 10;
+        }
+
+        // Check condition
+        if (i == sum) {
+            printf("%d ", i);
+        }
+    }
+    return 0;
+}
