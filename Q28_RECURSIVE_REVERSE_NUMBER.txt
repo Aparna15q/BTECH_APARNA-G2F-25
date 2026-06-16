@@ -1,0 +1,29 @@
+﻿#include <stdio.h>
+
+int reverseNumber(int num) {
+    static int reversedVal = 0; // Preserves value between recursive calls
+
+    if (num == 0) {
+        return reversedVal;
+    }
+
+    // Accumulate the digits
+    reversedVal = (reversedVal * 10) + (num % 10);
+
+    // Call function recursively with reduced number
+    reverseNumber(num / 10);
+
+    return reversedVal;
+}
+
+int main() {
+    int inputNum = 4521;
+    // Note: If calling this function multiple times in C,
+    // the static variable needs to be reset manually.
+    int result = reverseNumber(inputNum);
+
+    printf("Original: %d\n", inputNum);
+    printf("Reversed: %d\n", result);
+
+    return 0;
+}
