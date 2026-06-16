@@ -1,0 +1,35 @@
+﻿#include <stdio.h>
+
+int main() {
+    int decimal, i = 0;
+    int binary[32]; // Array to store binary digits (handles up to 32-bit integers)
+
+    // Accept user input
+    printf("Enter a decimal number: ");
+    if (scanf("%d", &decimal) != 1) {
+        printf("Invalid input.\n");
+        return 1;
+    }
+
+    // Handle the edge case where the input is exactly 0
+    if (decimal == 0) {
+        printf("Binary equivalent: 0\n");
+        return 0;
+    }
+
+    // Step-by-step division-by-2 method
+    while (decimal > 0) {
+        binary[i] = decimal % 2; // Store the remainder (0 or 1)
+        decimal = decimal / 2;   // Divide the quotient by 2
+        i++;                     // Increment index
+    }
+
+    // Print the array in reverse order to get the correct binary format
+    printf("Binary equivalent: ");
+    for (int j = i - 1; j >= 0; j--) {
+        printf("%d", binary[j]);
+    }
+    printf("\n");
+
+    return 0;
+}
