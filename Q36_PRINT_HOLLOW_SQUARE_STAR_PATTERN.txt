@@ -1,0 +1,30 @@
+﻿#include <stdio.h>
+
+int main() {
+    int i, j, side;
+
+    // Input the side length of the square from the user
+    printf("Enter the side of the square: ");
+    scanf("%d", &side);
+
+    // Outer loop to handle the rows
+    for(i = 1; i <= side; i++) {
+
+        // Inner loop to handle the columns
+        for(j = 1; j <= side; j++) {
+
+            // Print star only for the boundaries (first/last row or first/last column)
+            if(i == 1 || i == side || j == 1 || j == side) {
+                printf("*");
+            } else {
+                printf(" "); // Print space for hollow internal parts
+            }
+        }
+
+        // Move to the next line after completing a row
+        printf("\n")
+;
+    }
+
+    return 0;
+}
