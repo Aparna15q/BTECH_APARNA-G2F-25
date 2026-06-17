@@ -1,0 +1,27 @@
+﻿#include <stdio.h>
+
+int main() {
+    int rows;
+    char startChar = 'A'; // The starting character for the top of the triangle
+
+    printf("Enter the number of rows: ");
+    scanf("%d", &rows);
+
+    // Outer loop controls the current row
+    for (int i = 0; i < rows; i++) {
+
+        // Inner loop prints the same character 'i + 1' times
+        for (int j = 0; j <= i; j++) {
+            printf("%c ", startChar);
+        }
+
+        // Increment character for the next row
+        startChar++;
+
+        // Move to the next line
+        printf("\n");
+
+    }
+
+    return 0;
+}
