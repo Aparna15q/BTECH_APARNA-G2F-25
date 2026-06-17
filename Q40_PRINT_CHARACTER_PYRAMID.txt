@@ -1,0 +1,34 @@
+﻿#include <stdio.h>
+
+int main() {
+    int rows = 5; // Number of rows for the pattern
+    int i, j;
+    char ch;
+
+    for (i = 1; i <= rows; i++) {
+        // 1. Print leading spaces for alignment
+        for (j = 1; j <= rows - i; j++) {
+            printf(" ");
+        }
+
+        // 2. Print characters in ascending order
+        ch = 'A';
+        for (j = 1; j <= i; j++) {
+            printf("%c", ch);
+            ch++;
+        }
+
+        // 3. Print characters in descending order
+        ch -= 2; // Move back to the character before the peak
+        for (j = 1; j < i; j++) {
+            printf("%c", ch);
+            ch--;
+        }
+
+        // Move to the next line after completing a row
+        printf("
+\n");
+    }
+
+    return 0;
+}
