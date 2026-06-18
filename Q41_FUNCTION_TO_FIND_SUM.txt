@@ -1,0 +1,27 @@
+﻿#include <stdio.h>
+
+// Function declaration (prototype)
+int findSum(int num1, int num2);
+
+int main() {
+    int a, b, result;
+
+    // Taking input from the user
+    printf("Enter the first number: ");
+    scanf("%d", &a);
+    printf("Enter the second number: ");
+    scanf("%d", &b);
+
+    // Calling the function and storing the returned value
+    result = findSum(a, b);
+
+    // Displaying the output
+    printf("The sum of %d and %d is: %d\n", a, b, result);
+
+    return 0;
+}
+
+// Function definition to calculate the sum
+int findSum(int num1, int num2) {
+    return num1 + num2;
+}
