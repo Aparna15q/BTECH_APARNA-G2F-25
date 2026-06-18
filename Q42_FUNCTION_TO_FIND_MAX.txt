@@ -1,0 +1,49 @@
+﻿#include <stdio.h>
+
+// Function declarations (Prototypes)
+int findMaxOfTwo(int num1, int num2);
+int findMaxInArray(int arr[], int size);
+
+int main() {
+    // 1. Testing maximum of two numbers
+    int a = 15, b = 27;
+    int maxTwo = findMaxOfTwo(a, b);
+    printf("--- Maximum of Two Numbers ---\n");
+    printf("The maximum between %d and %d is: %d\n\n", a, b, maxTwo);
+
+    // 2. Testing maximum in an array
+    int numbers[] = {45, 12, 89, 7, 54, 31};
+    int size = sizeof(numbers) / sizeof(numbers[0]);
+
+    int maxArray = findMaxInArray(numbers, size);
+    printf("--- Maximum in an Array ---\n");
+    printf("The maximum element in the array is: %d\n", maxArray);
+
+    return 0;
+}
+
+/**
+ * Function to find the maximum between two integers.
+ * Uses a conditional (ternary) operator.
+ */
+int findMaxOfTwo(int num1, int num2) {
+    return (num1 > num2) ? num1 : num2;
+}
+
+/**
+ * Function to find the maximum value in an integer array.
+ * Iterates through elements to find the largest value.
+ */
+int findMaxInArray(int arr[], int size) {
+    // Assume the first element is the largest initially
+    int max = arr[0];
+
+    // Loop through the remaining elements
+    for (int i = 1; i < size; i++) {
+        if (arr[i] > max) {
+            max = arr[i]; // Update max if a larger value is found
+        }
+    }
+
+    return max;
+}
