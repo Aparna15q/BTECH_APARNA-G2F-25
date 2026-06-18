@@ -1,0 +1,60 @@
+﻿#include <stdio.h>
+
+// Function declarations
+int countDigits(int num);
+int power(int base, int exp);
+int isArmstrong(int num);
+
+int main() {
+    int number;
+
+    printf("Enter an integer: ");
+    if (scanf("%d", &number) != 1) {
+        printf("Invalid input.\n");
+        return 1;
+    }
+
+    // Call the function to check if the number is an Armstrong number
+    if (isArmstrong(number)) {
+        printf("%d is an Armstrong number.\n", number);
+    } else {
+        printf("%d is not an Armstrong number.\n", number);
+    }
+
+    return 0;
+}
+
+// Function to count the total number of digits
+int countDigits(int num) {
+    int count = 0;
+    while (num != 0) {
+        count++;
+        num /= 10;
+    }
+    return count;
+}
+
+// Function to calculate base raised to the power of exp (integer only)
+int power(int base, int exp) {
+    int res = 1;
+    for (int i = 0; i < exp; i++) {
+        res *= base;
+    }
+    return res;
+}
+
+// Function to check if a number is an Armstrong number
+int isArmstrong(int num) {
+    int originalNum = num;
+    int digits = countDigits(num);
+    int sum = 0;
+
+    while (num > 0) {
+        int remainder = num % 10;
+        sum += power(remainder, digits);
+        num /= 10;
+    }
+
+    // Returns 1 if true, 0 if false
+    return (sum == originalNum);
+}
