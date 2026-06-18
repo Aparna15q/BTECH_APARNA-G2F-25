@@ -1,0 +1,57 @@
+﻿#include <stdio.h>
+#include <stdbool.h>
+
+// Function prototype
+bool isPrime(int n);
+
+int main() {
+    int num;
+
+    // Request integer input from the user
+    printf("Enter a positive integer: ");
+    if (scanf("%d", &num) != 1) {
+        printf("Invalid input.\n");
+        return 1;
+    }
+
+    // Call the function and print the corresponding result
+    if (isPrime(num)) {
+        printf("%d is a prime number.\n", num);
+    } else {
+        printf("%d is not a prime number.\n", num);
+    }
+
+    return 0;
+}
+
+/**
+ * Function: isPrime
+ * Purpose: Determines if a given integer is a prime number.
+ * Parameter: int n - The number to verify.
+ * Returns: true if prime, false otherwise.
+ */
+bool isPrime(int n) {
+    // 1. Numbers less than or equal to 1 are not prime
+    if (n <= 1) {
+        return false;
+    }
+
+    // 2. 2 is the only even prime number
+    if (n == 2) {
+        return true;
+    }
+
+    // 3. Exclude all other even numbers instantly
+    if (n % 2 == 0) {
+        return false;
+    }
+
+    // 4. Test odd factors up to the square root of n (i * i <= n)
+    for (int i = 3; i * i <= n; i += 2) {
+        if (n % i == 0) {
+            return false; // Found a factor, not prime
+        }
+    }
+
+    return true; // No factors found, number is prime
+}
