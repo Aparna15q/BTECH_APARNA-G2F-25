@@ -1,0 +1,61 @@
+﻿#include <stdio.h>
+
+// Function declarations
+void printFibonacciIterative(int n);
+int getFibonacciRecursive(int n);
+
+int main() {
+    int terms;
+
+    // Get input from user
+    printf("Enter the number of terms: ");
+    if (scanf("%d", &terms) != 1 || terms <= 0) {
+        printf("Please enter a valid positive integer.\n");
+        return 1;
+    }
+
+    // Method 1: Iterative approach
+    printf("\nFibonacci Series (Iterative Method):\n");
+    printFibonacciIterative(terms);
+
+    // Method 2: Recursive approach
+    printf("\nFibonacci Series (Recursive Method):\n");
+    for (int i = 0; i < terms; i++) {
+        printf("%d ", getFibonacciRecursive(i));
+    }
+    printf("\n");
+
+    return 0;
+}
+
+/**
+ * Method 1: Iterative approach using a loop.
+ * Efficient and uses O(1) extra space.
+ */
+void printFibonacciIterative(int n) {
+    int t1 = 0, t2 = 1, nextTerm;
+
+    for (int i = 1; i <= n; ++i) {
+        printf("%d ", t1);
+        nextTerm = t1 + t2;
+        t1 = t2;
+        t2 = nextTerm;
+    }
+    printf("\n");
+}
+
+/**
+ * Method 2: Recursive approach.
+ * Returns the nth Fibonacci number (0-indexed).
+ */
+int getFibonacciRecursive(int n) {
+    // Base cases
+    if (n == 0) {
+        return 0;
+    }
+    if (n == 1) {
+        return 1;
+    }
+    // Recursive formula: F(n) = F(n-1) + F(n-2)
+    return getFibonacciRecursive(n - 1) + getFibonacciRecursive(n - 2);
+}
