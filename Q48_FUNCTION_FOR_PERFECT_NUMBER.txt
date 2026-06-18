@@ -1,0 +1,72 @@
+﻿#include <stdio.h>
+#include <stdbool.h>
+
+// Function declarations
+bool isPerfect(int num);
+void printPerfectNumbersInRange(int start, int end);
+
+int main() {
+    int userNumber, startRange, endRange;
+
+    // Task 1: Check a single number
+    printf("Enter an integer to check: ");
+    scanf("%d", &userNumber);
+
+    if (isPerfect(userNumber)) {
+        printf("%d is a perfect number.\n\n", userNumber);
+    } else {
+        printf("%d is NOT a perfect number.\n\n", userNumber);
+    }
+
+    // Task 2: Find all perfect numbers in a range
+    printf("Enter the starting and ending range (e.g., 1 500): ");
+    scanf("%d %d", &startRange, &endRange);
+
+    printPerfectNumbersInRange(startRange, endRange);
+
+    return 0;
+}
+
+/**
+ * Checks if a given number is a perfect number.
+ * Returns true if perfect, false otherwise.
+ */
+bool isPerfect(int num) {
+    // Perfect numbers must be greater than 0
+    if (num <= 0) {
+        return false;
+    }
+
+    int sum = 0;
+
+    // Loop through numbers up to num/2 to find proper divisors
+    for (int i = 1; i <= num / 2; i++) {
+        if (num % i == 0) {
+            sum += i; // i is a divisor, add it to sum
+        }
+    }
+
+    // If sum of divisors matches original number, it is perfect
+    return (sum == num);
+}
+
+/**
+ * Iterates through a user-specified range
+ * and prints all identified perfect numbers.
+ */
+void printPerfectNumbersInRange(int start, int end) {
+    printf("Perfect numbers between %d and %d are: ", start, end);
+    bool found = false;
+
+    for (int i = start; i <= end; i++) {
+        if (isPerfect(i)) {
+            printf("%d ", i);
+            found = true;
+        }
+    }
+
+    if (!found) {
+        printf("None");
+    }
+    printf("\n");
+}
