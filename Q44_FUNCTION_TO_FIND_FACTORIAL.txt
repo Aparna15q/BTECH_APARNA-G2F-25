@@ -1,0 +1,58 @@
+﻿#include <stdio.h>
+
+// Function Prototypes
+unsigned long long factorial_iterative(int n);
+unsigned long long factorial_recursive(int n);
+
+int main() {
+    int num;
+
+    // Get user input
+    printf("Enter a positive integer: ");
+    if (scanf("%d", &num) != 1) {
+        printf("Invalid input.\n");
+        return 1;
+    }
+
+    // Factorial is not defined for negative numbers
+    if (num < 0) {
+        printf("Error: Factorial of a negative number does not exist.\n");
+    } else if (num > 20) {
+        // 21! exceeds the maximum value of an unsigned long long (64-bit)
+        printf("Error: Input too large. Maximum supported number is 20.\n");
+    } else {
+        // Call and display results from both functions
+        printf("\n--- Results ---\n");
+        printf("Using Iteration: %d! = %llu\n", num, factorial_iterative(num));
+        printf("Using Recursion: %d! = %llu\n", num, factorial_recursive(num));
+    }
+
+    return 0;
+}
+
+/**
+ * 1. Iterative Approach
+ * Uses a standard for loop to continuously multiply integers.
+ */
+unsigned long long factorial_iterative(int n) {
+    unsigned long long fact = 1; // Base initialization
+
+    for (int i = 1; i <= n; i++) {
+        fact *= i; // Multiplies fact by 1, 2, 3... up to n
+    }
+
+    return fact;
+}
+
+/**
+ * 2. Recursive Approach
+ * Multiplies the current number by the factorial of (number - 1).
+ */
+unsigned long long factorial_recursive(int n) {
+    // Base Case: 0! and 1! are equal to 1
+    if (n <= 1) {
+        return 1;
+    }
+    // Recursive Case: n! = n * (n - 1)!
+    return n * factorial_recursive(n - 1);
+}
