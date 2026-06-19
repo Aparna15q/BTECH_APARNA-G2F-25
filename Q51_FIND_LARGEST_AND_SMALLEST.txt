@@ -1,0 +1,37 @@
+﻿#include <stdio.h>
+
+int main() {
+    int arr[100];
+    int size, i;
+    int largest, smallest;
+
+    // Ask user for the total number of elements
+    printf("Enter the number of elements in the array: ");
+    scanf("%d", &size);
+
+    // Take array input from the user
+    printf("Enter %d elements:\n", size);
+    for(i = 0; i < size; i++) {
+        scanf("%d", &arr[i]);
+    }
+
+    // Initialize both variables with the first element of the array
+    largest = arr[0];
+    smallest = arr[0];
+
+    // Traverse the array to compare elements
+    for(i = 1; i < size; i++) {
+        if(arr[i] > largest) {
+            largest = arr[i];
+        }
+        if(arr[i] < smallest) {
+            smallest = arr[i];
+        }
+    }
+
+    // Print the final results
+    printf("Largest element = %d\n", largest);
+    printf("Smallest element = %d\n", smallest);
+
+    return 0;
+}
