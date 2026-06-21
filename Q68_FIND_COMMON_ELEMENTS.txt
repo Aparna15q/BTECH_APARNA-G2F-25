@@ -1,0 +1,44 @@
+﻿#include <stdio.h>
+
+int main() {
+    int array1[] = {1, 2, 2, 3, 5, 6, 7, 8};
+    int array2[] = {2, 4, 5, 7, 8, 8, 10};
+
+    // Calculate the size of both arrays dynamically
+    int size1 = sizeof(array1) / sizeof(array1[0]);
+    int size2 = sizeof(array2) / sizeof(array2[0]);
+
+    // Array to track elements we have already printed
+    int printed[100];
+    int printedCount = 0;
+
+    printf("Common elements are: ");
+
+    // Compare each element of array1 with array2
+    for (int i = 0; i < size1; i++) {
+        for (int j = 0; j < size2; j++) {
+            if (array1[i] == array2[j]) {
+
+                // Check if the common element was already printed
+                int alreadyPrinted = 0;
+                for (int k = 0; k < printedCount; k++) {
+                    if (printed[k] == array1[i]) {
+                        alreadyPrinted = 1;
+                        break;
+                    }
+                }
+
+                // If it is a new common element, print and track it
+                if (!alreadyPrinted) {
+                    printf("%d ", array1[i]);
+                    printed[printedCount] = array1[i];
+                    printedCount++;
+                }
+                break; // Move to the next element in array1
+            }
+        }
+    }
+    printf("\n");
+
+    return 0;
+}
