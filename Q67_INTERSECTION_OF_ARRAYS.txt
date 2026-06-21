@@ -1,0 +1,64 @@
+﻿#include <stdio.h>
+
+// Helper function to check if a value is already present in an array
+int isDuplicate(int arr[], int size, int value) {
+    for (int i = 0; i < size; i++) {
+        if (arr[i] == value) {
+            return 1; // Found a duplicate
+        }
+    }
+    return 0; // Unique element
+}
+
+// Function to find and print the intersection of two arrays
+void findIntersection(int arr1[], int size1, int arr2[], int size2) {
+    int intersection[100]; // Array to store common elements
+    int k = 0;             // Counter for intersection array
+
+    // Compare each element of arr1 with every element of arr2
+    for (int i = 0; i < size1; i++) {
+        for (int j = 0; j < size2; j++) {
+            if (arr1[i] == arr2[j]) {
+                // Check if the element is already added to avoid duplicate outputs
+                if (!isDuplicate(intersection, k, arr1[i])) {
+                    intersection[k] = arr1[i];
+                    k++;
+                }
+                break; // Move to the next element in arr1 once a match is found
+            }
+        }
+    }
+
+    // Print the result
+    if (k == 0) {
+        printf("No common elements found.\n");
+    } else {
+        printf("Intersection of the two arrays: ");
+        for (int i = 0; i < k; i++) {
+            printf("%d ", intersection[i]);
+        }
+        printf("\n");
+    }
+}
+
+int main() {
+    // Define two example arrays
+    int array1[] = {4, 9, 5, 4};
+    int array2[] = {9, 4, 9, 8, 4};
+
+    // Calculate the size of the arrays
+    int size1 = sizeof(array1) / sizeof(array1[0]);
+    int size2 = sizeof(array2) / sizeof(array2[0]);
+
+    // Display the initial arrays
+    printf("Array 1: ");
+    for(int i = 0; i < size1; i++) printf("%d ", array1[i]);
+    printf("\nArray 2: ");
+    for(int i = 0; i < size2; i++) printf("%d ", array2[i]);
+    printf("\n\n");
+
+    // Call the function to find the intersection
+    findIntersection(array1, size1, array2, size2);
+
+    return 0;
+}
