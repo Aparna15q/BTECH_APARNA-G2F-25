@@ -1,0 +1,50 @@
+﻿#include <stdio.h>
+
+int main() {
+    int n1, n2, n3;
+    int i, j;
+
+    // 1. Input configuration for the first array
+    printf("Enter the number of elements in the first array: ");
+    scanf("%d", &n1);
+
+    int arr1[n1]; // Variable Length Array (VLA)
+    printf("Enter %d elements for the first array:\n", n1);
+    for (i = 0; i < n1; i++) {
+        scanf("%d", &arr1[i]);
+    }
+
+    // 2. Input configuration for the second array
+    printf("Enter the number of elements in the second array: ");
+    scanf("%d", &n2);
+
+    int arr2[n2];
+    printf("Enter %d elements for the second array:\n", n2);
+    for (i = 0; i < n2; i++) {
+        scanf("%d", &arr2[i]);
+    }
+
+    // 3. Size allocation for the merged array
+    n3 = n1 + n2;
+    int mergedArr[n3];
+
+    // 4. Copying elements from the first array
+    for (i = 0; i < n1; i++) {
+        mergedArr[i] = arr1[i];
+    }
+
+    // 5. Appending elements from the second array
+    for (j = 0; j < n2; j++) {
+        mergedArr[i] = arr2[j];
+        i++; // Continue incrementing the index of the merged array
+    }
+
+    // 6. Displaying the final result
+    printf("\nThe merged array is:\n");
+    for (i = 0; i < n3; i++) {
+        printf("%d ", mergedArr[i]);
+    }
+    printf("\n");
+
+    return 0;
+}
