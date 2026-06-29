@@ -1,0 +1,238 @@
+﻿#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_ITEMS 100
+#define FILE_NAME "inventory.txt"
+
+// Structure to define an inventory item
+typedef struct {
+    int id;
+    char name[50];
+    int quantity;
+    float price;
+} Item;
+
+// Global array and counter
+Item inventory[MAX_ITEMS];
+int item_count = 0;
+
+// Function prototypes
+void load_inventory();
+void save_inventory();
+void add_item();
+void view_inventory();
+void update_item();
+void delete_item();
+void search_item();
+
+int main() {
+    int choice;
+
+    // Load existing items from file at startup
+    load_inventory();
+
+    while (1) {
+        printf("\n=================================");
+        printf("\n   INVENTORY MANAGEMENT SYSTEM   ");
+        printf("\n=================================");
+        printf("\n1. Add New Item");
+        printf("\n2. View All Items");
+        printf("\n3. Update Item Stock/Price");
+        printf("\n4. Delete Item");
+        printf("\n5. Search Item");
+        printf("\n6. Save and Exit");
+        printf("\nEnter your choice (1-6): ");
+
+        if (scanf("%d", &choice) != 1) {
+            printf("Invalid input. Please enter a number.\n");
+            while (getchar() != '\n'); // Clear input buffer
+            continue;
+        }
+
+        switch (choice) {
+            case 1: add_item(); break;
+            case 2: view_inventory(); break;
+            case 3: update_item(); break;
+            case 4: delete_item(); break;
+            case 5: search_item(); break;
+            case 6:
+                save_inventory();
+                printf("Data saved. Exiting program...\n");
+                exit(0);
+            default: printf("Invalid choice! Please try again.\n");
+        }
+    }
+    return 0;
+}
+
+// Load inventory records from a text file
+void load_inventory() {
+    FILE *file = fopen(FILE_NAME, "r");
+    if (file == NULL) {
+        // File doesn't exist yet, it will be created on save
+        item_count = 0;
+        return;
+    }
+
+    item_count = 0;
+    while (fscanf(file, "%d,%49[^,],%d,%f\n",
+                  &inventory[item_count].id,
+                  inventory[item_count].name,
+                  &inventory[item_count].quantity,
+                  &inventory[item_count].price) == 4) {
+        item_count++;
+        if (item_count >= MAX_ITEMS) break;
+    }
+    fclose(file);
+}
+
+// Save inventory records to a text file
+void save_inventory() {
+    FILE *file = fopen(FILE_NAME, "w");
+    if (file == NULL) {
+        printf("Error opening file for writing!\n");
+        return;
+    }
+
+    for (int i = 0; i < item_count; i++) {
+        fprintf(file, "%d,%s,%d,%.2f\n",
+                inventory[i].id,
+                inventory[i].name,
+                inventory[i].quantity,
+                inventory[i].price);
+    }
+    fclose(file);
+}
+
+// Create: Add a brand new item to the stock
+void add_item() {
+    if (item_count >= MAX_ITEMS) {
+        printf("Inventory full! Cannot add more items.\n");
+        return;
+    }
+
+    Item new_item;
+    printf("\nEnter Unique Item ID (Integer): ");
+    scanf("%d", &new_item.id);
+
+    // Check if ID already exists
+    for (int i = 0; i < item_count; i++) {
+        if (inventory[i].id == new_item.id) {
+            printf("Error: An item with ID %d already exists.\n", new_item.id);
+            return;
+        }
+    }
+
+    printf("Enter Item Name: ");
+    while (getchar() != '\n'); // Clear buffer
+    fgets(new_item.name, sizeof(new_item.name), stdin);
+    new_item.name[strcspn(new_item.name, "\n")] = 0; // Strip newline character
+
+    printf("Enter Quantity: ");
+    scanf("%d", &new_item.quantity);
+    printf("Enter Price: ");
+    scanf("%f", &new_item.price);
+
+    inventory[item_count] = new_item;
+    item_count++;
+    printf("Item added successfully!\n");
+}
+
+// Read: Display all stored inventory items
+void view_inventory() {
+    if (item_count == 0) {
+        printf("\nYour inventory is completely empty.\n");
+        return;
+    }
+
+    printf("\n%-10s %-25s %-10s %-10s", "ID", "Name", "Quantity", "Price ($)");
+    printf("\n---------------------------------------------------------");
+    for (int i = 0; i < item_count; i++) {
+        printf("\n%-10d %-25s %-10d %-10.2f",
+               inventory[i].id,
+               inventory[i].name,
+               inventory[i].quantity,
+               inventory[i].price);
+    }
+    printf("\n");
+}
+
+// Update: Change stock levels or retail price
+void update_item() {
+    int id, found = 0;
+    printf("\nEnter the Item ID to update: ");
+    scanf("%d", &id);
+
+    for (int i = 0; i < item_count; i++) {
+        if (inventory[i].id == id) {
+            found = 1;
+            printf("Current Details - Name: %s, Qty: %d, Price: %.2f\n",
+                   inventory[i].name, inventory[i].quantity, inventory[i].price);
+
+            printf("Enter New Quantity: ");
+            scanf("%d", &inventory[i].quantity);
+            printf("Enter New Price: ");
+            scanf("%f", &inventory[i].price);
+
+            printf("Item information updated successfully!\n");
+            break;
+        }
+    }
+    if (!found) {
+        printf("Item with ID %d not found.\n", id);
+    }
+}
+
+// Delete: Remove an item entirely from the records
+void delete_item() {
+    int id, found = 0;
+    printf("\nEnter the Item ID to delete: ");
+    scanf("%d", &id);
+
+    for (int i = 0; i < item_count; i++) {
+        if (inventory[i].id == id) {
+            found = 1;
+            // Shift all subsequent items left by one position
+            for (int j = i; j < item_count - 1; j++) {
+                inventory[j] = inventory[j + 1];
+            }
+            item_count--;
+            printf("Item removed from inventory successfully.\n");
+            break;
+        }
+    }
+    if (!found) {
+        printf("Item with ID %d not found.\n", id);
+    }
+}
+
+// Search: Find items quickly via Name keyword
+void search_item() {
+    char search_name[50];
+    int found = 0;
+
+    printf("\nEnter Item Name to search: ");
+    while (getchar() != '\n'); // Clear buffer
+    fgets(search_name, sizeof(search_name), stdin);
+    search_name[strcspn(search_name, "\n")] = 0; // Strip newline
+
+    printf("\n%-10s %-25s %-10s %-10s", "ID", "Name", "Quantity", "Price ($)");
+    printf("\n---------------------------------------------------------");
+
+    for (int i = 0; i < item_count; i++) {
+        // Case-sensitive keyword match (strstr)
+        if (strstr(inventory[i].name, search_name) != NULL) {
+            printf("\n%-10d %-25s %-10d %-10.2f",
+                   inventory[i].id,
+                   inventory[i].name,
+                   inventory[i].quantity,
+                   inventory[i].price);
+            found = 1;
+        }
+    }
+    printf("\n");
+    if (!found) {
+        printf("No matching items found for '%s'.\n", search_name);
+    }
+}
