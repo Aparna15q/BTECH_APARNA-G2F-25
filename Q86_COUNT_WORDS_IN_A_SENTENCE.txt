@@ -1,0 +1,35 @@
+﻿#include <stdio.h>
+#include <ctype.h>
+
+int count_words(const char *str) {
+    int count = 0;
+    int in_word = 0; // State flag: 1 if inside a word, 0 if whitespace
+
+    while (*str) {
+        // isspace() checks for ' ', '\t', '\n', '\v', '\f', and '\r'
+        if (isspace((unsigned char)*str)) {
+            in_word = 0;
+        }
+        // If it's a non-whitespace character and we aren't in a word state yet
+        else if (!in_word) {
+            in_word = 1;
+            count++; // Found the start of a new word
+        }
+        str++; // Move to the next character
+    }
+
+    return count;
+}
+
+int main() {
+    char str[1000];
+
+    printf("Enter a string: ");
+    // fgets safely reads the entire line, including spaces
+    if (fgets(str, sizeof(str), stdin) != NULL) {
+        int words = count_words(str);
+        printf("Total number of words: %d\n", words);
+    }
+
+    return 0;
+}
