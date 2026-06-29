@@ -1,0 +1,39 @@
+﻿#include <stdio.h>
+
+// Function to remove all spaces from a given string in-place
+void removeSpaces(char *str) {
+    int readIndex = 0;
+    int writeIndex = 0;
+
+    // Traverse the string character by character
+    while (str[readIndex] != '\0') {
+        // If the current character is not a space, copy it
+        if (str[readIndex] != ' ') {
+            str[writeIndex] = str[readIndex];
+            writeIndex++;
+        }
+        readIndex++;
+    }
+
+    // Null-terminate the modified string to clear trailing garbage
+    str[writeIndex] = '\0';
+}
+
+int main() {
+    // Large buffer allocation to prevent buffer overflows
+    char sentence[256];
+
+    printf("Enter a string with spaces: ");
+
+    // fgets is safely used instead of gets() to handle inputs with spaces safely
+    if (fgets(sentence, sizeof(sentence), stdin) != NULL) {
+
+        // Remove spaces
+        removeSpaces(sentence);
+
+        // Display the cleaned result
+        printf("Resulting string: %s", sentence);
+    }
+
+    return 0;
+}
