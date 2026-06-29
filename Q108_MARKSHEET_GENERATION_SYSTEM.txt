@@ -1,0 +1,123 @@
+﻿#include <stdio.h>
+#include <string.h>
+
+// Structure to hold student details
+struct Student {
+    int roll_no;
+    char name[50];
+    int marks[5];
+    int total;
+    float percentage;
+    char grade[5];
+    char result[10];
+};
+
+// Function declarations
+void calculate_results(struct Student *s);
+void display_marksheet(struct Student s, const char subject_names[5][20]);
+
+int main() {
+    struct Student s;
+
+    // Predifined subject list for uniformity
+    const char subject_names[5][20] = {
+        "Mathematics",
+        "Physics",
+        "Chemistry",
+        "English",
+        "Computer Science"
+    };
+
+    printf("===========================================\n");
+    printf("     STUDENT MARKSHEET GENERATION SYSTEM   \n");
+    printf("===========================================\n");
+
+    // Gather Student Personal Information
+    printf("Enter Student Roll Number: ");
+    if (scanf("%d", &s.roll_no) != 1) {
+        printf("Invalid input for Roll Number.\n");
+        return 1;
+    }
+
+    // Clear input buffer before reading the name string
+    while (getchar() != '\n');
+
+    printf("Enter Student Full Name: ");
+    fgets(s.name, sizeof(s.name), stdin);
+    s.name[strcspn(s.name, "\n")] = 0; // Strip trailing newline character
+
+    // Gather and validate marks for each subject
+    printf("\nEnter marks out of 100:\n");
+    for (int i = 0; i < 5; i++) {
+        while (1) {
+            printf(" -> %s: ", subject_names[i]);
+            if (scanf("%d", &s.marks[i]) == 1) {
+                if (s.marks[i] >= 0 && s.marks[i] <= 100) {
+                    break; // Valid marks input
+                }
+            } else {
+                while (getchar() != '\n'); // Clear character trash from buffer
+            }
+            printf("    [Error] Invalid input! Marks must be an integer between 0 and 100.\n");
+        }
+    }
+
+    // Process data and print the finalized report card
+    calculate_results(&s);
+    display_marksheet(s, subject_names);
+
+    return 0;
+}
+
+// Logic processing engine for totals, percentages, and grading metrics
+void calculate_results(struct Student *s) {
+    s->total = 0;
+    int failed_any_subject = 0;
+
+    for (int i = 0; i < 5; i++) {
+        s->total += s->marks[i];
+        if (s->marks[i] < 33) { // 33 is the threshold passing score per subject
+            failed_any_subject = 1;
+        }
+    }
+
+    s->percentage = s->total / 5.0f;
+
+    // Assign performance metrics
+    if (failed_any_subject) {
+        strcpy(s->grade, "F");
+        strcpy(s->result, "FAIL");
+    } else {
+        strcpy(s->result, "PASS");
+        if (s->percentage >= 90) strcpy(s->grade, "A+");
+        else if (s->percentage >= 80) strcpy(s->grade, "A");
+        else if (s->percentage >= 70) strcpy(s->grade, "B");
+        else if (s->percentage >= 60) strcpy(s->grade, "C");
+        else if (s->percentage >= 50) strcpy(s->grade, "D");
+        else strcpy(s->grade, "E");
+    }
+}
+
+// Clean UI rendering logic for console presentation
+void display_marksheet(struct Student s, const char subject_names[5][20]) {
+    printf("\n\n");
+    printf("######################################################\n");
+    printf("#                OFFICIAL REPORT CARD                #\n");
+    printf("######################################################\n");
+    printf("  Roll Number : %-15d \n", s.roll_no);
+    printf("  Student Name: %-30s \n", s.name);
+    printf("------------------------------------------------------\n");
+    printf("  %-25s | %-15s\n", "SUBJECT NAME", "MARKS OBTAINED");
+    printf("------------------------------------------------------\n");
+
+    for (int i = 0; i < 5; i++) {
+        printf("  %-25s | %-3d / 100\n", subject_names[i], s.marks[i]);
+    }
+
+    printf("------------------------------------------------------\n");
+    printf("  Aggregate Total  : %-3d / 500\n", s.total);
+    printf("  Final Percentage : %-5.2f%%\n", s.percentage);
+    printf("  Assigned Grade   : %-4s\n", s.grade);
+    printf("  Status           : %-10s\n", s.result);
+    printf("######################################################\n");
+}
