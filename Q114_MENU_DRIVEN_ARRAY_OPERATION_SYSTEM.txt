@@ -1,0 +1,179 @@
+﻿#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_SIZE 100 // Maximum capacity of the array
+
+// Function Declarations
+void createArray(int arr[], int *size);
+void displayArray(const int arr[], int size);
+void insertElement(int arr[], int *size);
+void deleteElement(int arr[], int *size);
+void searchElement(const int arr[], int size);
+
+int main() {
+    int arr[MAX_SIZE];
+    int size = 0; // Tracks the current number of elements in the array
+    int choice;
+
+    while (1) {
+        printf("\n====================================");
+        printf("\n    ARRAY OPERATIONS SYSTEM MENU    ");
+        printf("\n====================================");
+        printf("\n1. Create / Populate Array");
+        printf("\n2. Display Array Elements");
+        printf("\n3. Insert Element at a Position");
+        printf("\n4. Delete Element from a Position");
+        printf("\n5. Search for an Element");
+        printf("\n6. Exit");
+        printf("\n====================================");
+        printf("\nEnter your choice (1-6): ");
+
+        if (scanf("%d", &choice) != 1) {
+            printf("Invalid input! Please enter a number.\n");
+            while (getchar() != '\n'); // Clear input buffer
+            continue;
+        }
+
+        switch (choice) {
+            case 1:
+                createArray(arr, &size);
+                break;
+            case 2:
+                displayArray(arr, size);
+                break;
+            case 3:
+                insertElement(arr, &size);
+                break;
+            case 4:
+                deleteElement(arr, &size);
+                break;
+            case 5:
+                searchElement(arr, size);
+                break;
+            case 6:
+                printf("\nExiting the system. Goodbye!\n");
+                exit(0);
+            default:
+                printf("\nInvalid selection! Please choose between 1 and 6.\n");
+        }
+    }
+    return 0;
+}
+
+// 1. Create/Populate Array
+void createArray(int arr[], int *size) {
+    int n;
+    printf("\nEnter the number of elements to add (Max %d): ", MAX_SIZE);
+    scanf("%d", &n);
+
+    if (n < 0 || n > MAX_SIZE) {
+        printf("Error: Invalid size! Cannot exceed %d elements.\n", MAX_SIZE);
+        return;
+    }
+
+    *size = n;
+    printf("Enter %d elements:\n", *size);
+    for (int i = 0; i < *size; i++) {
+        printf("Element [%d]: ", i);
+        scanf("%d", &arr[i]);
+    }
+    printf("Array created successfully!\n");
+}
+
+// 2. Display Array Elements
+void displayArray(const int arr[], int size) {
+    if (size == 0) {
+        printf("\nThe array is currently empty.\n");
+        return;
+    }
+
+    printf("\nCurrent Array Elements:\n[ ");
+    for (int i = 0; i < size; i++) {
+        printf("%d", arr[i]);
+        if (i < size - 1) {
+            printf(", ");
+        }
+    }
+    printf(" ]\nTotal elements: %d\n", size);
+}
+
+// 3. Insert Element at a Specific Index Position
+void insertElement(int arr[], int *size) {
+    if (*size >= MAX_SIZE) {
+        printf("\nError: Overflow! The array is full.\n");
+        return;
+    }
+
+    int pos, value;
+    printf("\nEnter target position (0 to %d): ", *size);
+    scanf("%d", &pos);
+
+    if (pos < 0 || pos > *size) {
+        printf("Error: Invalid position choice!\n");
+        return;
+    }
+
+    printf("Enter the integer value to insert: ");
+    scanf("%d", &value);
+
+    // Shift trailing elements to the right
+    for (int i = *size; i > pos; i--) {
+        arr[i] = arr[i - 1];
+    }
+
+    arr[pos] = value; // Put value in the target slot
+    (*size)++;        // Increment tracked size
+    printf("Element inserted successfully!\n");
+}
+
+// 4. Delete Element from a Position
+void deleteElement(int arr[], int *size) {
+    if (*size == 0) {
+        printf("\nError: Underflow! The array is empty.\n");
+        return;
+    }
+
+    int pos;
+    printf("\nEnter position to delete from (0 to %d): ", *size - 1);
+    scanf("%d", &pos);
+
+    if (pos < 0 || pos >= *size) {
+        printf("Error: Invalid position selection!\n");
+        return;
+    }
+
+    int deletedValue = arr[pos];
+
+    // Shift trailing elements to the left
+    for (int i = pos; i < *size - 1; i++) {
+        arr[i] = arr[i + 1];
+    }
+
+    (*size)--; // Decrement tracked size
+    printf("Deleted element %d successfully!\n", deletedValue);
+}
+
+// 5. Search for an Element (Linear Search)
+void searchElement(const int arr[], int size) {
+    if (size == 0) {
+        printf("\nThe array is empty. Nothing to search.\n");
+        return;
+    }
+
+    int target, foundIndex = -1;
+    printf("\nEnter the element value to search for: ");
+    scanf("%d", &target);
+
+    for (int i = 0; i < size; i++) {
+        if (arr[i] == target) {
+            foundIndex = i;
+            break; // Stop at first match
+        }
+    }
+
+    if (foundIndex != -1) {
+        printf("Element %d found at array position index: %d\n", target, foundIndex);
+    } else {
+        printf("Element %d was not found in the array.\n", target);
+    }
+}
