@@ -1,0 +1,40 @@
+﻿#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+void removeDuplicates(char *str) {
+    // Array to track ASCII characters (all initialized to false)
+    bool seen[256] = { false };
+
+    int targetIndex = 0; // Index to write unique characters
+
+    for (int i = 0; str[i] != '\0'; i++) {
+        unsigned char ch = str[i];
+
+        // If the character has not been seen yet
+        if (!seen[ch]) {
+            seen[ch] = true;         // Mark it as seen
+            str[targetIndex++] = ch; // Move it to the active part of the string
+        }
+    }
+
+    // Null-terminate the filtered string to seal its new length
+    str[targetIndex] = '\0';
+}
+
+int main() {
+    char text[100];
+
+    printf("Enter a string: ");
+    // Use fgets instead of gets to prevent buffer overflow vulnerabilities
+    if (fgets(text, sizeof(text), stdin)) {
+        // Remove trailing newline character added by fgets if present
+        text[strcspn(text, "\n")] = '\0';
+
+        removeDuplicates(text);
+
+        printf("String after removing duplicates: %s\n", text);
+    }
+
+    return 0;
+}
