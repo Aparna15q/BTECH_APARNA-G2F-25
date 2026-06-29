@@ -1,0 +1,199 @@
+﻿#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_EMPLOYEES 100
+
+// Define the Employee structure
+struct Employee {
+    int id;
+    char name[50];
+    float basic_salary;
+    float hra;
+    float da;
+    float gross_salary;
+    float tax;
+    float net_salary;
+};
+
+// Global array and counter to store employee records
+struct Employee employees[MAX_EMPLOYEES];
+int employee_count = 0;
+
+// Function declarations
+void addEmployee();
+void displayAllEmployees();
+void searchEmployee();
+void generatePayslip();
+
+int main() {
+    int choice;
+
+    while (1) {
+        printf("\n=========================================\n");
+        printf("        SALARY MANAGEMENT SYSTEM         \n");
+        printf("=========================================\n");
+        printf("1. Add Employee Record\n");
+        printf("2. Display All Employee Salaries\n");
+        printf("3. Search Employee by ID\n");
+        printf("4. Generate Individual Payslip\n");
+        printf("5. Exit\n");
+        printf("-----------------------------------------\n");
+        printf("Enter your choice (1-5): ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                addEmployee();
+                break;
+            case 2:
+                displayAllEmployees();
+                break;
+            case 3:
+                searchEmployee();
+                break;
+            case 4:
+                generatePayslip();
+                break;
+            case 5:
+                printf("\nExiting system. Goodbye!\n");
+                exit(0);
+            default:
+                printf("\nInvalid choice! Please choose between 1 and 5.\n");
+        }
+    }
+    return 0;
+}
+
+// Function to add a new employee and automatically compute salary metrics
+void addEmployee() {
+    if (employee_count >= MAX_EMPLOYEES) {
+        printf("\nSystem database full! Cannot add more records.\n");
+        return;
+    }
+
+    struct Employee e;
+    printf("\nEnter Employee ID: ");
+    scanf("%d", &e.id);
+
+    // Check if ID already exists
+    for (int i = 0; i < employee_count; i++) {
+        if (employees[i].id == e.id) {
+            printf("Error: Employee ID %d already exists!\n", e.id);
+            return;
+        }
+    }
+
+    printf("Enter Employee Name: ");
+    scanf(" %[^\n]s", e.name); // Reads strings with spaces
+    printf("Enter Basic Salary: $");
+    scanf("%f", &e.basic_salary);
+
+    // Automated Salary Formulas
+    e.hra = e.basic_salary * 0.20;       // 20% of Basic Salary as HRA
+    e.da = e.basic_salary * 0.50;        // 50% of Basic Salary as DA
+    e.gross_salary = e.basic_salary + e.hra + e.da;
+
+    // Simple bracket-based tax calculation
+    if (e.gross_salary <= 3000) {
+        e.tax = e.gross_salary * 0.05;   // 5% Tax
+    } else if (e.gross_salary <= 7000) {
+        e.tax = e.gross_salary * 0.10;   // 10% Tax
+    } else {
+        e.tax = e.gross_salary * 0.15;   // 15% Tax
+    }
+
+    e.net_salary = e.gross_salary - e.tax;
+
+    // Save record to the array
+    employees[employee_count] = e;
+    employee_count++;
+
+    printf("\nEmployee record added successfully!\n");
+}
+
+// Function to view all database entries summarized
+void displayAllEmployees() {
+    if (employee_count == 0) {
+        printf("\nNo records available to display.\n");
+        return;
+    }
+
+    printf("\n----------------------------------------------------------------------------------------\n");
+    printf("%-5s %-20s %-12s %-8s %-8s %-12s %-8s %-12s\n",
+           "ID", "Name", "Basic", "HRA", "DA", "Gross", "Tax", "Net Salary");
+    printf("----------------------------------------------------------------------------------------\n");
+
+    for (int i = 0; i < employee_count; i++) {
+        printf("%-5d %-20s %-12.2f %-8.2f %-8.2f %-12.2f %-8.2f %-12.2f\n",
+               employees[i].id, employees[i].name, employees[i].basic_salary,
+               employees[i].hra, employees[i].da, employees[i].gross_salary,
+               employees[i].tax, employees[i].net_salary);
+    }
+    printf("----------------------------------------------------------------------------------------\n");
+}
+
+// Function to search for an individual by ID
+void searchEmployee() {
+    if (employee_count == 0) {
+        printf("\nNo records available to search.\n");
+        return;
+    }
+
+    int search_id, found = 0;
+    printf("\nEnter Employee ID to search: ");
+    scanf("%d", &search_id);
+
+    for (int i = 0; i < employee_count; i++) {
+        if (employees[i].id == search_id) {
+            printf("\nRecord Found:\n");
+            printf("ID: %d\n", employees[i].id);
+            printf("Name: %s\n", employees[i].name);
+            printf("Net Salary: $%.2f\n", employees[i].net_salary);
+            found = 1;
+            break;
+        }
+    }
+    if (!found) {
+        printf("\nEmployee with ID %d not found.\n", search_id);
+    }
+}
+
+// Function to print a formal salary slip
+void generatePayslip() {
+    if (employee_count == 0) {
+        printf("\nNo records available to generate payslips.\n");
+        return;
+    }
+
+    int search_id, found = 0;
+    printf("\nEnter Employee ID for Payslip: ");
+    scanf("%d", &search_id);
+
+    for (int i = 0; i < employee_count; i++) {
+        if (employees[i].id == search_id) {
+            found = 1;
+            printf("\n=========================================\n");
+            printf("             SALARY PAYSLIP              \n");
+            printf("=========================================\n");
+            printf(" Employee ID   : %d\n", employees[i].id);
+            printf(" Employee Name : %s\n", employees[i].name);
+            printf("-----------------------------------------\n");
+            printf(" Earnings:\n");
+            printf("   Basic Salary : $%.2f\n", employees[i].basic_salary);
+            printf("   HRA (20%%)    : $%.2f\n", employees[i].hra);
+            printf("   DA (50%%)     : $%.2f\n", employees[i].da);
+            printf("   GROSS SALARY : $%.2f\n", employees[i].gross_salary);
+            printf("-----------------------------------------\n");
+            printf(" Deductions:\n");
+            printf("   Income Tax   : $%.2f\n", employees[i].tax);
+            printf("-----------------------------------------\n");
+            printf(" NET TAKE-HOME : $%.2f\n", employees[i].net_salary);
+            printf("=========================================\n");
+            break;
+        }
+    }
+    if (!found) {
+        printf("\nEmployee with ID %d not found.\n", search_id);
+    }
+}
