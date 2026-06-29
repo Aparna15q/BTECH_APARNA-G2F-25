@@ -1,0 +1,65 @@
+﻿#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+// Function to compress the input string
+void compressString(const char *src, char *dest) {
+    int i = 0;
+    int j = 0; // Index pointer for the destination string
+    int len = strlen(src);
+
+    // Loop through each character of the source string
+    while (i < len) {
+        int count = 1;
+
+        // Count consecutive occurrences of the current character
+        while (i + 1 < len && src[i] == src[i + 1]) {
+            count++;
+            i++;
+        }
+
+        // Write the character to destination
+        dest[j++] = src[i];
+
+        // Convert the integer count to characters and append to destination
+        int written = sprintf(&dest[j], "%d", count);
+        j += written;
+
+        i++;
+    }
+
+    // Null-terminate the compressed string
+    dest[j] = '\0';
+
+    // If compression doesn't save space, keep the original string
+    if (strlen(dest) >= len) {
+        strcpy(dest, src);
+    }
+}
+
+int main() {
+    char input[1000];
+
+    printf("Enter a string to compress: ");
+    if (scanf("%999s", input) != 1) {
+        printf("Error reading input.\n");
+        return 1;
+    }
+
+    // Allocate worst-case memory for the output (2 * input size)
+    char *compressed = (char *)malloc(2 * strlen(input) + 1);
+    if (compressed == NULL) {
+        printf("Memory allocation failed.\n");
+        return 1;
+    }
+
+    // Execute compression
+    compressString(input, compressed);
+
+    // Output the results
+    printf("Result: %s\n", compressed);
+
+    // Clean up allocated memory
+    free(compressed);
+    return 0;
+}
