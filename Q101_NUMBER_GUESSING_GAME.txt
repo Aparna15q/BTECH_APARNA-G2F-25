@@ -1,0 +1,48 @@
+﻿#include <stdio.h>   // Required for printf() and scanf()
+#include <stdlib.h>  // Required for rand() and srand()
+#include <time.h>    // Required for time() to generate unique random numbers
+
+int main() {
+    int secret_number, guess;
+    int attempts = 0;
+
+    // Seed the random number generator using the current system time
+    srand(time(NULL));
+
+    // Generate a random secret number between 1 and 100
+    secret_number = (rand() % 100) + 1;
+
+    printf("=========================================\n");
+    printf("    WELCOME TO THE NUMBER GUESSING GAME  \n");
+    printf("=========================================\n");
+    printf("I have selected a number between 1 and 100.\n");
+    printf("Can you guess what it is?\n\n");
+
+    // Loop until the user guesses the correct number
+    do {
+        printf("Enter your guess: ");
+
+        // Validate input to ensure it is a valid integer
+        if (scanf("%d", &guess) != 1) {
+            printf("Invalid input! Please enter a valid number.\n");
+            while (getchar() != '\n'); // Clear the input buffer
+            continue;
+        }
+
+        attempts++; // Increment attempt counter
+
+        // Provide feedback on the guess
+        if (guess > secret_number) {
+            printf("Too high! Try a lower number.\n\n");
+        } else if (guess < secret_number) {
+            printf("Too low! Try a higher number.\n\n");
+        } else {
+            printf("\n🎉 CONGRATULATIONS! You guessed it right!\n");
+            printf("The secret number was %d.\n", secret_number);
+            printf("You won the game in %d attempts.\n", attempts);
+        }
+
+    } while (guess != secret_number);
+
+    return 0;
+}
