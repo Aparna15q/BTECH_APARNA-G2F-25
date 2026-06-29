@@ -1,0 +1,156 @@
+﻿#include <stdio.h>
+#include <string.h>
+
+#define MAX_STUDENTS 100
+#define MAX_NAME_LEN 50
+
+// Function Prototypes
+void displayMenu();
+void addStudent(char names[][MAX_NAME_LEN], int rolls[], float grades[], int *count);
+void displayStudents(char names[][MAX_NAME_LEN], int rolls[], float grades[], int count);
+void searchStudent(char names[][MAX_NAME_LEN], int rolls[], float grades[], int count);
+void calculateAverage(float grades[], int count);
+
+int main() {
+    // Parallel Arrays storing the database state
+    char studentNames[MAX_STUDENTS][MAX_NAME_LEN];
+    int studentRolls[MAX_STUDENTS];
+    float studentGrades[MAX_STUDENTS];
+    int studentCount = 0;
+    int choice;
+
+    printf("=== Welcome to the Student Database Management System ===\n");
+
+    do {
+        displayMenu();
+        printf("Enter your choice (1-5): ");
+        if (scanf("%d", &choice) != 1) {
+            printf("Invalid input type. Exiting system.\n");
+            break;
+        }
+
+        // Clean the input buffer to prevent string skipping in fgets
+        while (getchar() != '\n');
+
+        switch (choice) {
+            case 1:
+                addStudent(studentNames, studentRolls, studentGrades, &studentCount);
+                break;
+            case 2:
+                displayStudents(studentNames, studentRolls, studentGrades, studentCount);
+                break;
+            case 3:
+                searchStudent(studentNames, studentRolls, studentGrades, studentCount);
+                break;
+            case 4:
+                calculateAverage(studentGrades, studentCount);
+                break;
+            case 5:
+                printf("\nExiting the system. Thank you!\n");
+                break;
+            default:
+                printf("\nInvalid option! Please pick a number from 1 to 5.\n");
+        }
+    } while (choice != 5);
+
+    return 0;
+}
+
+// 1. Function to display the console interface menu
+void displayMenu() {
+    printf("\n-------------------------------\n");
+    printf("1. Add New Student\n");
+    printf("2. Display All Students\n");
+    printf("3. Search Student by Name\n");
+    printf("4. Calculate Class Average Grade\n");
+    printf("5. Exit System\n");
+    printf("-------------------------------\n");
+}
+
+// 2. Function to add student records using string parsing and arrays
+void addStudent(char names[][MAX_NAME_LEN], int rolls[], float grades[], int *count) {
+    if (*count >= MAX_STUDENTS) {
+        printf("\nError: System storage is full!\n");
+        return;
+    }
+
+    printf("\nEnter Student Name: ");
+    fgets(names[*count], MAX_NAME_LEN, stdin);
+
+    // Strip trailing newline character added by fgets
+    size_t len = strlen(names[*count]);
+    if (len > 0 && names[*count][len - 1] == '\n') {
+        names[*count][len - 1] = '\0';
+    }
+
+    printf("Enter Roll Number: ");
+    scanf("%d", &rolls[*count]);
+
+    printf("Enter Grade / Marks: ");
+    scanf("%f", &grades[*count]);
+
+    (*count)++; // Increment the structural total record tracker
+    printf("Success: Student record saved!\n");
+}
+
+// 3. Function to display rows of array elements
+void displayStudents(char names[][MAX_NAME_LEN], int rolls[], float grades[], int count) {
+    if (count == 0) {
+        printf("\nNo student records found in the system.\n");
+        return;
+    }
+
+    printf("\n%-20s %-12s %-6s\n", "Student Name", "Roll No", "Grade");
+    printf("-----------------------------------------\n");
+    for (int i = 0; i < count; i++) {
+        printf("%-20s %-12d %-6.2f\n", names[i], rolls[i], grades[i]);
+    }
+}
+
+// 4. Function applying string comparison mechanics to look up data
+void searchStudent(char names[][MAX_NAME_LEN], int rolls[], float grades[], int count) {
+    if (count == 0) {
+        printf("\nThe database is empty.\n");
+        return;
+    }
+
+    char searchName[MAX_NAME_LEN];
+    printf("\nEnter the name of the student to search: ");
+    fgets(searchName, MAX_NAME_LEN, stdin);
+
+    size_t len = strlen(searchName);
+    if (len > 0 && searchName[len - 1] == '\n') {
+        searchName[len - 1] = '\0';
+    }
+
+    int found = 0;
+    for (int i = 0; i < count; i++) {
+        // Built-in string comparison checks for an exact string match
+        if (strcmp(names[i], searchName) == 0) {
+            printf("\nRecord Found!");
+            printf("\nName: %s\nRoll Number: %d\nGrade: %.2f\n", names[i], rolls[i], grades[i]);
+            found = 1;
+            break;
+        }
+    }
+
+    if (!found) {
+        printf("\nStudent '%s' was not found in our records.\n", searchName);
+    }
+}
+
+// 5. Function passing structural tracking variables to compute basic aggregate steps
+void calculateAverage(float grades[], int count) {
+    if (count == 0) {
+        printf("\nNo records available to calculate an average.\n");
+        return;
+    }
+
+    float sum = 0;
+    for (int i = 0; i < count; i++) {
+        sum += grades[i];
+    }
+
+    float average = sum / count;
+    printf("\nThe class performance average across %d students is: %.2f\n", count, average);
+}
