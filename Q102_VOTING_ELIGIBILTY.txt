@@ -1,0 +1,50 @@
+﻿#include <stdio.h>
+#include <ctype.h>
+
+int main() {
+    int age;
+    char isRegistered;
+
+    // 1. Get and Validate Age
+    printf("--- Voting Eligibility System ---\n");
+    printf("Enter your age: ");
+
+    // Input validation to ensure a valid integer is provided
+    if (scanf("%d", &age) != 1) {
+        printf("Invalid input! Please restart the program and enter a valid number.\n");
+        return 1;
+    }
+
+    // Check if age is logically possible
+    if (age < 0 || age > 130) {
+        printf("Invalid age entered. Please try again.\n");
+        return 1;
+    }
+
+    // 2. Determine Eligibility
+    if (age >= 18) {
+        printf("\nYou meet the age requirement (18+).\n");
+
+        // 3. Check Registration Status
+        printf("Are you a registered voter? (Y/N): ");
+        scanf(" %c", &isRegistered); // Space before %c skips any leftover whitespace
+
+        if (toupper(isRegistered) == 'Y') {
+            printf("\n🎉 You are fully ELIGIBLE to vote! Please exercise your right.\n");
+        }
+        else if (toupper(isRegistered) == 'N') {
+            printf("\n❌ You are not eligible because you are not registered.\n");
+            printf("Please complete your voter registration to cast your vote.\n");
+        }
+        else {
+            printf("\nInvalid input. Please answer with 'Y' or 'N'.\n");
+        }
+    }
+    else {
+        int yearsToWait = 18 - age;
+        printf("\n❌ You are NOT eligible to vote yet.\n");
+        printf("You must be 18 years or older. You can vote in %d year(s).\n", yearsToWait);
+    }
+
+    return 0;
+}
