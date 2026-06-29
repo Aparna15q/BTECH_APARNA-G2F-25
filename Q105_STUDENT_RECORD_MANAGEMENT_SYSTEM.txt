@@ -1,0 +1,199 @@
+﻿#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STUDENTS 100
+
+// Structure to store student information
+typedef struct {
+    int id;
+    char name[50];
+    int age;
+    float gpa;
+} Student;
+
+// Global array and counter to track records
+Student students[MAX_STUDENTS];
+int studentCount = 0;
+
+// Function prototypes
+void addStudent();
+void displayStudents();
+void searchStudent();
+void updateStudent();
+void deleteStudent();
+void clearInputBuffer();
+
+int main() {
+    int choice;
+
+    while (1) {
+        printf("\n=== STUDENT RECORD MANAGEMENT SYSTEM ===\n");
+        printf("1. Add Student Record\n");
+        printf("2. Display All Students\n");
+        printf("3. Search Student by ID\n");
+        printf("4. Update Student Record\n");
+        printf("5. Delete Student Record\n");
+        printf("6. Exit\n");
+        printf("Enter your choice (1-6): ");
+
+        if (scanf("%d", &choice) != 1) {
+            printf("Invalid input! Please enter a number.\n");
+            clearInputBuffer();
+            continue;
+        }
+
+        switch (choice) {
+            case 1: addStudent(); break;
+            case 2: displayStudents(); break;
+            case 3: searchStudent(); break;
+            case 4: updateStudent(); break;
+            case 5: deleteStudent(); break;
+            case 6:
+                printf("Exiting system. Goodbye!\n");
+                exit(0);
+            default:
+                printf("Invalid choice! Please select between 1 and 6.\n");
+        }
+    }
+    return 0;
+}
+
+// Function to add a new student record
+void addStudent() {
+    if (studentCount >= MAX_STUDENTS) {
+        printf("Database full! Cannot add more records.\n");
+        return;
+    }
+
+    int id;
+    printf("\nEnter Student ID: ");
+    scanf("%d", &id);
+
+    // Check if ID already exists
+    for (int i = 0; i < studentCount; i++) {
+        if (students[i].id == id) {
+            printf("Error: A student with ID %d already exists!\n", id);
+            return;
+        }
+    }
+
+    students[studentCount].id = id;
+    clearInputBuffer(); // Clear newline left in buffer
+
+    printf("Enter Name: ");
+    fgets(students[studentCount].name, sizeof(students[studentCount].name), stdin);
+    students[studentCount].name[strcspn(students[studentCount].name, "\n")] = '\0'; // Remove newline character
+
+    printf("Enter Age: ");
+    scanf("%d", &students[studentCount].age);
+
+    printf("Enter GPA: ");
+    scanf("%f", &students[studentCount].gpa);
+
+    studentCount++;
+    printf("Record added successfully!\n");
+}
+
+// Function to view all stored student records
+void displayStudents() {
+    if (studentCount == 0) {
+        printf("\nNo student records found.\n");
+        return;
+    }
+
+    printf("\n-------------------------------------------------------------\n");
+    printf("%-10s %-25s %-10s %-5s\n", "ID", "Name", "Age", "GPA");
+    printf("-------------------------------------------------------------\n");
+    for (int i = 0; i < studentCount; i++) {
+        printf("%-10d %-25s %-10d %-5.2f\n",
+               students[i].id, students[i].name, students[i].age, students[i].gpa);
+    }
+    printf("-------------------------------------------------------------\n");
+}
+
+// Function to search a record using a unique ID
+void searchStudent() {
+    if (studentCount == 0) {
+        printf("\nNo records available to search.\n");
+        return;
+    }
+
+    int id;
+    printf("\nEnter Student ID to search: ");
+    scanf("%d", &id);
+
+    for (int i = 0; i < studentCount; i++) {
+        if (students[i].id == id) {
+            printf("\nStudent Found:\n");
+            printf("ID: %d\nName: %s\nAge: %d\nGPA: %.2f\n",
+                   students[i].id, students[i].name, students[i].age, students[i].gpa);
+            return;
+        }
+    }
+    printf("Student with ID %d not found.\n", id);
+}
+
+// Function to modify an existing student record
+void updateStudent() {
+    if (studentCount == 0) {
+        printf("\nNo records available to update.\n");
+        return;
+    }
+
+    int id;
+    printf("\nEnter Student ID to update: ");
+    scanf("%d", &id);
+
+    for (int i = 0; i < studentCount; i++) {
+        if (students[i].id == id) {
+            printf("Record Found! Enter new details:\n");
+            clearInputBuffer();
+
+            printf("Enter New Name: ");
+            fgets(students[i].name, sizeof(students[i].name), stdin);
+            students[i].name[strcspn(students[i].name, "\n")] = '\0';
+
+            printf("Enter New Age: ");
+            scanf("%d", &students[i].age);
+
+            printf("Enter New GPA: ");
+            scanf("%f", &students[i].gpa);
+
+            printf("Record updated successfully!\n");
+            return;
+        }
+    }
+    printf("Student with ID %d not found.\n", id);
+}
+
+// Function to remove a record by shifting subsequent elements
+void deleteStudent() {
+    if (studentCount == 0) {
+        printf("\nNo records available to delete.\n");
+        return;
+    }
+
+    int id;
+    printf("\nEnter Student ID to delete: ");
+    scanf("%d", &id);
+
+    for (int i = 0; i < studentCount; i++) {
+        if (students[i].id == id) {
+            // Shift remaining records to fill the deleted slot
+            for (int j = i; j < studentCount - 1; j++) {
+                students[j] = students[j + 1];
+            }
+            studentCount--;
+            printf("Record deleted successfully!\n");
+            return;
+        }
+    }
+    printf("Student with ID %d not found.\n", id);
+}
+
+// Helper function to safely flush the standard input stream
+void clearInputBuffer() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
