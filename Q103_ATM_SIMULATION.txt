@@ -1,0 +1,133 @@
+﻿#include <stdio.h>
+#include <stdlib.h>
+
+// Global configuration constants
+#define DEFAULT_PIN 1234
+#define MAX_ATTEMPTS 3
+
+// Function declarations
+int authenticateUser();
+void displayMenu();
+void checkBalance(float balance);
+float depositMoney(float balance);
+float withdrawMoney(float balance);
+
+int main() {
+    float accountBalance = 5000.0; // Initialized starting balance
+    int menuChoice;
+    int isRunning = 1;
+
+    printf("==========================================\n");
+    printf("       WELCOME TO THE ATM SIMULATOR       \n");
+    printf("==========================================\n");
+
+    // Phase 1: Authentication
+    if (!authenticateUser()) {
+        printf("\n[ERROR] Maximum PIN attempts reached. Card blocked!\n");
+        return 0; // Terminate execution
+    }
+
+    // Phase 2: Main Transaction Loop
+    while (isRunning) {
+        displayMenu();
+        printf("Enter your choice (1-4): ");
+        if (scanf("%d", &menuChoice) != 1) {
+            printf("\n[ERROR] Invalid entry format. Exiting simulator.\n");
+            break;
+        }
+
+        switch (menuChoice) {
+            case 1:
+                checkBalance(accountBalance);
+                break;
+            case 2:
+                accountBalance = depositMoney(accountBalance);
+                break;
+            case 3:
+                accountBalance = withdrawMoney(accountBalance);
+                break;
+            case 4:
+                printf("\nThank you for choosing our banking services. Goodbye!\n");
+                isRunning = 0;
+                break;
+            default:
+                printf("\n[INVALID OPTION] Please select a valid number from the menu.\n");
+        }
+    }
+    return 0;
+}
+
+// Function to handle secure PIN verification
+int authenticateUser() {
+    int enteredPin;
+    int loginAttempts = 0;
+
+    while (loginAttempts < MAX_ATTEMPTS) {
+        printf("Please enter your 4-digit PIN: ");
+        if (scanf("%d", &enteredPin) != 1) {
+            printf("Invalid characters detected. Try again.\n");
+            while (getchar() != '\n'); // Clear input buffer
+            loginAttempts++;
+            continue;
+        }
+
+        if (enteredPin == DEFAULT_PIN) {
+            printf("\n[SUCCESS] PIN verified successfully.\n");
+            return 1; // Access granted
+        } else {
+            loginAttempts++;
+            printf("[WARNING] Incorrect PIN. Remaining attempts: %d\n\n", MAX_ATTEMPTS - loginAttempts);
+        }
+    }
+    return 0; // Access denied
+}
+
+// Function to display the core application interface
+void displayMenu() {
+    printf("\n------------------------------------------\n");
+    printf("               MAIN MENU                  \n");
+    printf("------------------------------------------\n");
+    printf("1. Check Balance\n");
+    printf("2. Deposit Cash\n");
+    printf("3. Withdraw Cash\n");
+    printf("4. Exit Application\n");
+    printf("------------------------------------------\n");
+}
+
+// Function to process balance inquiries
+void checkBalance(float balance) {
+    printf("\nYour current available balance is: $%.2f\n", balance);
+}
+
+// Function to execute cash additions
+float depositMoney(float balance) {
+    float depositAmount;
+    printf("\nEnter the amount to deposit: $");
+    scanf("%f", &depositAmount);
+
+    if (depositAmount <= 0) {
+        printf("[ERROR] Cannot deposit negative or zero amounts.\n");
+    } else {
+        balance += depositAmount;
+        printf("[SUCCESS] $%.2f deposited. New Balance: $%.2f\n", depositAmount, balance);
+    }
+    return balance;
+}
+
+// Function to safely execute balance deductions
+float withdrawMoney(float balance) {
+    float withdrawalAmount;
+    printf("\nEnter the amount to withdraw: $");
+    scanf("%f", &withdrawalAmount);
+
+    if (withdrawalAmount <= 0) {
+        printf("[ERROR] Invalid withdrawal amount requested.\n");
+    } else if (withdrawalAmount > balance) {
+        printf("[DENIED] Insufficient funds! Available balance: $%.2f\n", balance);
+    } else {
+        balance -= withdrawalAmount;
+        printf("[SUCCESS] $%.2f dispensed successfully.\n", withdrawalAmount);
+        printf("[UPDATED] Remaining Balance: $%.2f\n", balance);
+    }
+    return balance;
+}
