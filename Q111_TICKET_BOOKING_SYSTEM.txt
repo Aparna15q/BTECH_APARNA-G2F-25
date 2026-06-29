@@ -1,0 +1,146 @@
+﻿#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define TOTAL_SEATS 20
+#define TICKET_PRICE 15.0
+
+// Structure to hold individual booking information
+struct Booking {
+    int seatNumber;
+    char passengerName[50];
+    int isBooked; // 0 = Available, 1 = Booked
+};
+
+// Function declarations
+void displayMenu();
+void viewSeats(struct Booking system[]);
+void bookTicket(struct Booking system[]);
+void cancelTicket(struct Booking system[]);
+
+int main() {
+    struct Booking system[TOTAL_SEATS];
+    int choice;
+
+    // Initialize all seats as available
+    for (int i = 0; i < TOTAL_SEATS; i++) {
+        system[i].seatNumber = i + 1;
+        system[i].isBooked = 0;
+        strcpy(system[i].passengerName, "None");
+    }
+
+    // Main program loop
+    while (1) {
+        displayMenu();
+        printf("Enter your choice (1-4): ");
+        if (scanf("%d", &choice) != 1) {
+            printf("\nError: Invalid input type. Exiting system.\n");
+            break;
+        }
+
+        switch (choice) {
+            case 1:
+                viewSeats(system);
+                break;
+            case 2:
+                bookTicket(system);
+                break;
+            case 3:
+                cancelTicket(system);
+                break;
+            case 4:
+                printf("\nThank you for using the Ticket Booking System!\n");
+                exit(0);
+            default:
+                printf("\nInvalid option! Please pick a number from 1 to 4.\n");
+        }
+    }
+    return 0;
+}
+
+// Displays the main interactive console options
+void displayMenu() {
+    printf("\n=== TICKET BOOKING SYSTEM ===\n");
+    printf("1. View Seating Chart\n");
+    printf("2. Book a Ticket\n");
+    printf("3. Cancel a Ticket\n");
+    printf("4. Exit System\n");
+    printf("=============================\n");
+}
+
+// Renders the visual availability grid of all seats
+void viewSeats(struct Booking system[]) {
+    printf("\n--- CURRENT SEATING STATUS ---\n");
+    printf("Seat No.\tStatus\t\tPassenger Name\n");
+    printf("---------------------------------------------\n");
+    for (int i = 0; i < TOTAL_SEATS; i++) {
+        printf("%d\t\t%s\t\t%s\n",
+               system[i].seatNumber,
+               system[i].isBooked ? "[ BOOKED ]" : "[AVAILABLE]",
+               system[i].passengerName);
+    }
+}
+
+// Handles seat selection, user entry validation, and checkout
+void bookTicket(struct Booking system[]) {
+    int targetSeat;
+
+    printf("\nEnter the seat number you want to book (1-%d): ", TOTAL_SEATS);
+    scanf("%d", &targetSeat);
+
+    // Validate if the user input falls within structural limits
+    if (targetSeat < 1 || targetSeat > TOTAL_SEATS) {
+        printf("\nError: Seat number does not exist.\n");
+        return;
+    }
+
+    // Core validation to prevent double-booking historical records
+    int index = targetSeat - 1;
+    if (system[index].isBooked == 1) {
+        printf("\nSorry, Seat %d is already taken by %s.\n", targetSeat, system[index].passengerName);
+        return;
+    }
+
+    // Process the booking information safely
+    printf("Enter passenger name: ");
+    getchar(); // Clear the input buffer trailing newline
+    fgets(system[index].passengerName, sizeof(system[index].passengerName), stdin);
+
+    // Remove the newline character captured by fgets
+    system[index].passengerName[strcspn(system[index].passengerName, "\n")] = 0;
+
+    system[index].isBooked = 1;
+
+    // Generate receipt layout
+    printf("\n--- BOOKING SUCCESSFUL ---\n");
+    printf("Passenger Name: %s\n", system[index].passengerName);
+    printf("Assigned Seat:  %d\n", system[index].seatNumber);
+    printf("Total Cost:     $%.2f\n", TICKET_PRICE);
+    printf("--------------------------\n");
+}
+
+// Performs cancellations and clears matching record fields
+void cancelTicket(struct Booking system[]) {
+    int targetSeat;
+
+    printf("\nEnter your seat number to cancel booking (1-%d): ", TOTAL_SEATS);
+    scanf("%d", &targetSeat);
+
+    if (targetSeat < 1 || targetSeat > TOTAL_SEATS) {
+        printf("\nError: Invalid seat layout location.\n");
+        return;
+    }
+
+    int index = targetSeat - 1;
+    if (system[index].isBooked == 0) {
+        printf("\nNotice: This seat is not currently booked.\n");
+        return;
+    }
+
+    // Reset fields back to clean initialization status
+    printf("\nBooking for %s at Seat %d has been successfully canceled.\n",
+           system[index].passengerName, system[index].seatNumber);
+
+    system[index].isBooked = 0;
+    strcpy(system[index].passengerName, "None");
+}
