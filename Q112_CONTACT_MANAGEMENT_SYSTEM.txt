@@ -1,0 +1,237 @@
+﻿#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define FILE_NAME "contacts.txt"
+
+// Structure to hold contact details
+typedef struct {
+    char name[50];
+    char phone[20];
+    char email[50];
+} Contact;
+
+// Function prototypes
+void addContact();
+void viewContacts();
+void searchContact();
+void deleteContact();
+void clearInputBuffer();
+
+int main() {
+    int choice;
+
+    while (1) {
+        printf("\n=================================");
+        printf("\n    CONTACT MANAGEMENT SYSTEM    ");
+        printf("\n=================================");
+        printf("\n1. Add New Contact");
+        printf("\n2. View All Contacts");
+        printf("\n3. Search Contact");
+        printf("\n4. Delete Contact");
+        printf("\n5. Exit");
+        printf("\n=================================");
+        printf("\nEnter your choice (1-5): ");
+
+        if (scanf("%d", &choice) != 1) {
+            printf("\nInvalid input! Please enter a number.\n");
+            clearInputBuffer();
+            continue;
+        }
+        clearInputBuffer(); // Clear newline character from buffer
+
+        switch (choice) {
+            case 1:
+                addContact();
+                break;
+            case 2:
+                viewContacts();
+                break;
+            case 3:
+                searchContact();
+                break;
+            case 4:
+                deleteContact();
+                break;
+            case 5:
+                printf("\nExiting system. Goodbye!\n");
+                exit(0);
+            default:
+                printf("\nInvalid choice! Please try again.\n");
+        }
+    }
+    return 0;
+}
+
+// Function to add a new contact to the file
+void addContact() {
+    FILE *fp = fopen(FILE_NAME, "a"); // Open file in append mode
+    if (fp == NULL) {
+        printf("\nError opening file!\n");
+        return;
+    }
+
+    Contact c;
+    printf("\nEnter Name: ");
+    fgets(c.name, sizeof(c.name), stdin);
+    c.name[strcspn(c.name, "\n")] = '\0'; // Remove trailing newline
+
+    printf("Enter Phone Number: ");
+    fgets(c.phone, sizeof(c.phone), stdin);
+    c.phone[strcspn(c.phone, "\n")] = '\0';
+
+    printf("Enter Email Address: ");
+    fgets(c.email, sizeof(c.email), stdin);
+    c.email[strcspn(c.email, "\n")] = '\0';
+
+    // Write structure data safely using a delimiter (comma-separated)
+    fprintf(fp, "%s,%s,%s\n", c.name, c.phone, c.email);
+    fclose(fp);
+
+    printf("\nContact added successfully!\n");
+}
+
+// Function to display all contacts stored in the file
+void viewContacts() {
+    FILE *fp = fopen(FILE_NAME, "r"); // Open file in read mode
+    if (fp == NULL) {
+        printf("\nNo contacts found. The file is empty or missing.\n");
+        return;
+    }
+
+    char line[150];
+    int count = 1;
+
+    printf("\n%-5s %-25s %-15s %-30s", "S.No", "Name", "Phone", "Email");
+    printf("\n----------------------------------------------------------------88");
+
+    while (fgets(line, sizeof(line), fp)) {
+        Contact c;
+        // Parse CSV style formatted data
+        char *token = strtok(line, ",");
+        if (token) strcpy(c.name, token);
+
+        token = strtok(NULL, ",");
+        if (token) strcpy(c.phone, token);
+
+        token = strtok(NULL, "\n");
+        if (token) strcpy(c.email, token);
+
+        printf("\n%-5d %-25s %-15s %-30s", count++, c.name, c.phone, c.email);
+    }
+
+    if (count == 1) {
+        printf("\nNo records found.");
+    }
+    printf("\n");
+    fclose(fp);
+}
+
+// Function to search for a contact by name
+void searchContact() {
+    FILE *fp = fopen(FILE_NAME, "r");
+    if (fp == NULL) {
+        printf("\nNo contacts available to search.\n");
+        return;
+    }
+
+    char searchName[50];
+    printf("\nEnter the name to search: ");
+    fgets(searchName, sizeof(searchName), stdin);
+    searchName[strcspn(searchName, "\n")] = '\0';
+
+    char line[150];
+    int found = 0;
+
+    while (fgets(line, sizeof(line), fp)) {
+        Contact c;
+        char tempLine[150];
+        strcpy(tempLine, line); // Keep copy for tokenizing
+
+        char *token = strtok(tempLine, ",");
+        if (token) strcpy(c.name, token);
+
+        token = strtok(NULL, ",");
+        if (token) strcpy(c.phone, token);
+
+        token = strtok(NULL, "\n");
+        if (token) strcpy(c.email, token);
+
+        // Case-insensitive fallback check can be added, currently direct match
+        if (strcasecmp(c.name, searchName) == 0) {
+            if (!found) {
+                printf("\n%-25s %-15s %-30s", "Name", "Phone", "Email");
+                printf("\n-------------------------------------------------------");
+            }
+            printf("\n%-25s %-15s %-30s", c.name, c.phone, c.email);
+            found = 1;
+        }
+    }
+
+    if (!found) {
+        printf("\nContact not found.\n");
+    } else {
+        printf("\n");
+    }
+    fclose(fp);
+}
+
+// Function to delete a contact by name
+void deleteContact() {
+    FILE *fp = fopen(FILE_NAME, "r");
+    if (fp == NULL) {
+        printf("\nNo contacts available to delete.\n");
+        return;
+    }
+
+    char deleteName[50];
+    printf("\nEnter the name of the contact to delete: ");
+    fgets(deleteName, sizeof(deleteName), stdin);
+    deleteName[strcspn(deleteName, "\n")] = '\0';
+
+    // Open a temporary file to copy over remaining contacts
+    FILE *tempFp = fopen("temp.txt", "w");
+    if (tempFp == NULL) {
+        printf("\nError processing deletion!\n");
+        fclose(fp);
+        return;
+    }
+
+    char line[150];
+    int found = 0;
+
+    while (fgets(line, sizeof(line), fp)) {
+        Contact c;
+        char tempLine[150];
+        strcpy(tempLine, line);
+
+        char *token = strtok(tempLine, ",");
+        if (token) strcpy(c.name, token);
+
+        // If it matches the user entry, skip writing it to the temporary file
+        if (strcasecmp(c.name, deleteName) == 0) {
+            found = 1;
+            continue;
+        }
+        fprintf(tempFp, "%s", line);
+    }
+
+    fclose(fp);
+    fclose(tempFp);
+
+    // Swap files to commit the deletion
+    if (found) {
+        remove(FILE_NAME);
+        rename("temp.txt", FILE_NAME);
+        printf("\nContact deleted successfully!\n");
+    } else {
+        remove("temp.txt"); // Clean up temporary file
+        printf("\nContact not found.\n");
+    }
+}
+
+// Helper function to clean stale inputs from standard input
+void clearInputBuffer() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
