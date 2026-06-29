@@ -1,0 +1,190 @@
+﻿#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define FILE_NAME "library_employees.dat"
+
+// Structure to store Employee details
+struct Employee {
+    int id;
+    char name[50];
+    char role[30]; // e.g., Librarian, Assistant, Manager
+    float salary;
+};
+
+// Function prototypes
+void addEmployee();
+void displayEmployees();
+void searchEmployee();
+void deleteEmployee();
+
+int main() {
+    int choice;
+
+    while (1) {
+        printf("\n=================================");
+        printf("\n MINI LIBRARY EMPLOYEE SYSTEM");
+        printf("\n=================================");
+        printf("\n1. Add Employee Record");
+        printf("\n2. Display All Employees");
+        printf("\n3. Search Employee by ID");
+        printf("\n4. Delete Employee Record");
+        printf("\n5. Exit");
+        printf("\n=================================");
+        printf("\nEnter your choice (1-5): ");
+
+        if (scanf("%d", &choice) != 1) {
+            printf("Invalid input. Please enter a number.\n");
+            while (getchar() != '\n'); // Clear input buffer
+            continue;
+        }
+
+        switch (choice) {
+            case 1:
+                addEmployee();
+                break;
+            case 2:
+                displayEmployees();
+                break;
+            case 3:
+                searchEmployee();
+                break;
+            case 4:
+                deleteEmployee();
+                break;
+            case 5:
+                printf("\nExiting system. Thank you!\n");
+                exit(0);
+            default:
+                printf("\nInvalid choice! Please select between 1 and 5.\n");
+        }
+    }
+    return 0;
+}
+
+// Function to add a new employee record to the file
+void addEmployee() {
+    FILE *fp = fopen(FILE_NAME, "ab"); // Open in append binary mode
+    if (fp == NULL) {
+        printf("\nError opening file!\n");
+        return;
+    }
+
+    struct Employee emp;
+
+    printf("\nEnter Employee ID: ");
+    scanf("%d", &emp.id);
+    getchar(); // Consume trailing newline character
+
+    printf("Enter Employee Name: ");
+    fgets(emp.name, sizeof(emp.name), stdin);
+    emp.name[strcspn(emp.name, "\n")] = 0; // Remove newline character
+
+    printf("Enter Role (Librarian/Assistant/Manager): ");
+    fgets(emp.role, sizeof(emp.role), stdin);
+    emp.role[strcspn(emp.role, "\n")] = 0;
+
+    printf("Enter Salary: ");
+    scanf("%f", &emp.salary);
+
+    fwrite(&emp, sizeof(struct Employee), 1, fp);
+    fclose(fp);
+
+    printf("\nEmployee record added successfully!\n");
+}
+
+// Function to read and display all employee records
+void displayEmployees() {
+    FILE *fp = fopen(FILE_NAME, "rb"); // Open in read binary mode
+    if (fp == NULL) {
+        printf("\nNo records found. Please add an employee first.\n");
+        return;
+    }
+
+    struct Employee emp;
+    printf("\n---------------------------------------------------------------\n");
+    printf("%-10s %-25s %-15s %-10s\n", "ID", "Name", "Role", "Salary");
+    printf("---------------------------------------------------------------\n");
+
+    while (fread(&emp, sizeof(struct Employee), 1, fp) == 1) {
+        printf("%-10d %-25s %-15s $%-9.2f\n", emp.id, emp.name, emp.role, emp.salary);
+    }
+    printf("---------------------------------------------------------------\n");
+    fclose(fp);
+}
+
+// Function to search for an employee by ID
+void searchEmployee() {
+    FILE *fp = fopen(FILE_NAME, "rb");
+    if (fp == NULL) {
+        printf("\nNo records found.\n");
+        return;
+    }
+
+    int searchId;
+    int found = 0;
+    struct Employee emp;
+
+    printf("\nEnter Employee ID to search: ");
+    scanf("%d", &searchId);
+
+    while (fread(&emp, sizeof(struct Employee), 1, fp) == 1) {
+        if (emp.id == searchId) {
+            printf("\nRecord Found!");
+            printf("\nID: %d", emp.id);
+            printf("\nName: %s", emp.name);
+            printf("\nRole: %s", emp.role);
+            printf("\nSalary: $%.2f\n", emp.salary);
+            found = 1;
+            break;
+        }
+    }
+
+    if (!found) {
+        printf("\nEmployee with ID %d not found.\n", searchId);
+    }
+    fclose(fp);
+}
+
+// Function to delete an employee record
+void deleteEmployee() {
+    FILE *fp = fopen(FILE_NAME, "rb");
+    if (fp == NULL) {
+        printf("\nNo records found.\n");
+        return;
+    }
+
+    FILE *tempFp = fopen("temp.dat", "wb"); // Temporary file
+    if (tempFp == NULL) {
+        printf("\nError processing request.\n");
+        fclose(fp);
+        return;
+    }
+
+    int deleteId;
+    int found = 0;
+    struct Employee emp;
+
+    printf("\nEnter Employee ID to delete: ");
+    scanf("%d", &deleteId);
+
+    while (fread(&emp, sizeof(struct Employee), 1, fp) == 1) {
+        if (emp.id == deleteId) {
+            found = 1; // Skip writing this record to skip/delete it
+        } else {
+            fwrite(&emp, sizeof(struct Employee), 1, tempFp);
+        }
+    }
+
+    fclose(fp);
+    fclose(tempFp);
+
+    if (found) {
+        remove(FILE_NAME);             // Delete old file
+        rename("temp.dat", FILE_NAME); // Rename temp file to original
+        printf("\nEmployee record deleted successfully!\n");
+    } else {
+        remove("temp.dat"); // Clean up temp file
+        printf("\nEmployee with ID %d not found.\n", deleteId);
+    }
+}
