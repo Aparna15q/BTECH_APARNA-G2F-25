@@ -1,0 +1,129 @@
+﻿#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+// Structure to store account details
+struct BankAccount {
+    int accountNumber;
+    char name[100];
+    double balance;
+};
+
+// Function prototypes
+void createAccount(struct BankAccount *account);
+void checkBalance(struct BankAccount account);
+void depositMoney(struct BankAccount *account);
+void withdrawMoney(struct BankAccount *account);
+
+int main() {
+    struct BankAccount myAccount;
+    myAccount.accountNumber = 0; // Initialize as 0 to check if account exists
+    myAccount.balance = 0.0;
+
+    int choice;
+
+    do {
+        printf("\n=================================");
+        printf("\n      BANK ACCOUNT SYSTEM        ");
+        printf("\n=================================");
+        printf("\n1. Create Account");
+        printf("\n2. Check Balance");
+        printf("\n3. Deposit Money");
+        printf("\n4. Withdraw Money");
+        printf("\n5. Exit");
+        printf("\n=================================");
+        printf("\nEnter your choice (1-5): ");
+        scanf("%d", &choice);
+
+        switch(choice) {
+            case 1:
+                createAccount(&myAccount);
+                break;
+            case 2:
+                checkBalance(myAccount);
+                break;
+            case 3:
+                depositMoney(&myAccount);
+                break;
+            case 4:
+                withdrawMoney(&myAccount);
+                break;
+            case 5:
+                printf("\nThank you for banking with us! Exiting...\n");
+                break;
+            default:
+                printf("\nInvalid choice! Please enter a number between 1 and 5.\n");
+        }
+    } while(choice != 5);
+
+    return 0;
+}
+
+void createAccount(struct BankAccount *account) {
+    printf("\n--- Create New Account ---");
+    printf("\nEnter Account Number: ");
+    scanf("%d", &account->accountNumber);
+
+    // Consume newline left in the buffer by scanf
+    while (getchar() != '\n');
+
+    printf("Enter Account Holder Name: ");
+    fgets(account->name, sizeof(account->name), stdin);
+    strtok(account->name, "\n"); // Remove the trailing newline character from fgets
+
+    printf("Enter Initial Deposit Amount: ");
+    scanf("%lf", &account->balance);
+
+    printf("\nAccount created successfully for %s!\n", account->name);
+}
+
+void checkBalance(struct BankAccount account) {
+    if (account.accountNumber == 0) {
+        printf("\nNo account found! Please create an account first.\n");
+        return;
+    }
+    printf("\n--- Account Details ---");
+    printf("\nAccount Number: %d", account.accountNumber);
+    printf("\nAccount Holder: %s", account.name);
+    printf("\nCurrent Balance: $%.2f\n", account.balance);
+}
+
+void depositMoney(struct BankAccount *account) {
+    if (account->accountNumber == 0) {
+        printf("\nNo account found! Please create an account first.\n");
+        return;
+    }
+
+    double amount;
+    printf("\n--- Deposit Money ---");
+    printf("\nEnter amount to deposit: ");
+    scanf("%lf", &amount);
+
+    if (amount > 0) {
+        account->balance += amount;
+        printf("\nSuccessfully deposited $%.2f. New Balance: $%.2f\n", amount, account->balance);
+    } else {
+        printf("\nInvalid amount! Deposit must be greater than 0.\n");
+    }
+}
+
+void withdrawMoney(struct BankAccount *account) {
+    if (account->accountNumber == 0) {
+        printf("\nNo account found! Please create an account first.\n");
+        return;
+    }
+
+    double amount;
+    printf("\n--- Withdraw Money ---");
+    printf("\nEnter amount to withdraw: ");
+    scanf("%lf", &amount);
+
+    if (amount > 0 && amount <= account->balance) {
+        account->balance -= amount;
+        printf("\nSuccessfully withdrawn $%.2f. New Balance: $%.2f\n", amount, account->balance);
+    } else if (amount > account->balance) {
+        printf("\nInsufficient balance! Transaction failed.\n");
+    } else {
+        printf("\nInvalid amount! Withdrawal must be greater than 0.\n");
+    }
+}
