@@ -1,0 +1,231 @@
+﻿#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define FILE_NAME "employees.dat"
+
+// Structure to hold employee information
+typedef struct {
+    int id;
+    char name[50];
+    char designation[50];
+    float salary;
+} Employee;
+
+// Function declarations
+void addEmployee();
+void displayEmployees();
+void searchEmployee();
+void modifyEmployee();
+void deleteEmployee();
+void clearInputBuffer();
+
+int main() {
+    int choice;
+
+    while (1) {
+        printf("\n=== MINI EMPLOYEE MANAGEMENT SYSTEM ===\n");
+        printf("1. Add Employee Record\n");
+        printf("2. Display All Records\n");
+        printf("3. Search Employee Record\n");
+        printf("4. Modify Employee Record\n");
+        printf("5. Delete Employee Record\n");
+        printf("6. Exit\n");
+        printf("Enter your choice (1-6): ");
+
+        if (scanf("%d", &choice) != 1) {
+            printf("Invalid input! Please enter a number.\n");
+            clearInputBuffer();
+            continue;
+        }
+
+        switch (choice) {
+            case 1: addEmployee(); break;
+            case 2: displayEmployees(); break;
+            case 3: searchEmployee(); break;
+            case 4: modifyEmployee(); break;
+            case 5: deleteEmployee(); break;
+            case 6:
+                printf("Exiting system. Goodbye!\n");
+                exit(0);
+            default:
+                printf("Invalid choice! Please try again.\n");
+        }
+    }
+    return 0;
+}
+
+// Function to safely clear standard input buffer
+void clearInputBuffer() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
+
+// 1. Add a new employee record (Appends to binary file)
+void addEmployee() {
+    FILE *fp = fopen(FILE_NAME, "ab");
+    if (fp == NULL) {
+        printf("Error opening file!\n");
+        return;
+    }
+
+    Employee emp;
+    printf("\nEnter Employee ID: ");
+    scanf("%d", &emp.id);
+    clearInputBuffer();
+
+    printf("Enter Name: ");
+    fgets(emp.name, sizeof(emp.name), stdin);
+    emp.name[strcspn(emp.name, "\n")] = 0; // Remove trailing newline
+
+    printf("Enter Designation: ");
+    fgets(emp.designation, sizeof(emp.designation), stdin);
+    emp.designation[strcspn(emp.designation, "\n")] = 0;
+
+    printf("Enter Salary: ");
+    scanf("%f", &emp.salary);
+
+    fwrite(&emp, sizeof(Employee), 1, fp);
+    fclose(fp);
+
+    printf("Record added successfully!\n");
+}
+
+// 2. Display all employee records
+void displayEmployees() {
+    FILE *fp = fopen(FILE_NAME, "rb");
+    if (fp == NULL) {
+        printf("\nNo records found. Add an employee first!\n");
+        return;
+    }
+
+    Employee emp;
+    printf("\n---------------------------------------------------------------\n");
+    printf("%-10s %-20s %-20s %-10s\n", "ID", "Name", "Designation", "Salary");
+    printf("---------------------------------------------------------------\n");
+
+    while (fread(&emp, sizeof(Employee), 1, fp) == 1) {
+        printf("%-10d %-20s %-20s %-10.2f\n", emp.id, emp.name, emp.designation, emp.salary);
+    }
+    printf("---------------------------------------------------------------\n");
+    fclose(fp);
+}
+
+// 3. Search employee by ID
+void searchEmployee() {
+    FILE *fp = fopen(FILE_NAME, "rb");
+    if (fp == NULL) {
+        printf("\nNo records found!\n");
+        return;
+    }
+
+    int searchId, found = 0;
+    Employee emp;
+
+    printf("\nEnter Employee ID to search: ");
+    scanf("%d", &searchId);
+
+    while (fread(&emp, sizeof(Employee), 1, fp) == 1) {
+        if (emp.id == searchId) {
+            printf("\nRecord Found:\n");
+            printf("ID: %d\nName: %s\nDesignation: %s\nSalary: %.2f\n",
+                   emp.id, emp.name, emp.designation, emp.salary);
+            found = 1;
+            break;
+        }
+    }
+
+    if (!found) {
+        printf("Employee with ID %d not found.\n", searchId);
+    }
+    fclose(fp);
+}
+
+// 4. Modify an existing record
+void modifyEmployee() {
+    FILE *fp = fopen(FILE_NAME, "rb+");
+    if (fp == NULL) {
+        printf("\nNo records found to modify!\n");
+        return;
+    }
+
+    int targetId, found = 0;
+    Employee emp;
+
+    printf("\nEnter Employee ID to modify: ");
+    scanf("%d", &targetId);
+
+    while (fread(&emp, sizeof(Employee), 1, fp) == 1) {
+        if (emp.id == targetId) {
+            found = 1;
+            printf("\nCurrent Record details:\n");
+            printf("Name: %s | Designation: %s | Salary: %.2f\n", emp.name, emp.designation, emp.salary);
+
+            // Get new details
+            clearInputBuffer();
+            printf("\nEnter New Name: ");
+            fgets(emp.name, sizeof(emp.name), stdin);
+            emp.name[strcspn(emp.name, "\n")] = 0;
+
+            printf("Enter New Designation: ");
+            fgets(emp.designation, sizeof(emp.designation), stdin);
+            emp.designation[strcspn(emp.designation, "\n")] = 0;
+
+            printf("Enter New Salary: ");
+            scanf("%f", &emp.salary);
+
+            // Move file pointer back to override the correct record block
+            fseek(fp, -sizeof(Employee), SEEK_CUR);
+            fwrite(&emp, sizeof(Employee), 1, fp);
+            printf("Record updated successfully!\n");
+            break;
+        }
+    }
+
+    if (!found) {
+        printf("Employee with ID %d not found.\n", targetId);
+    }
+    fclose(fp);
+}
+
+// 5. Delete a record (Uses a temporary file copy strategy)
+void deleteEmployee() {
+    FILE *fp = fopen(FILE_NAME, "rb");
+    if (fp == NULL) {
+        printf("\nNo records found to delete!\n");
+        return;
+    }
+
+    FILE *tempFp = fopen("temp.dat", "wb");
+    if (tempFp == NULL) {
+        printf("Error creating temporary file!\n");
+        fclose(fp);
+        return;
+    }
+
+    int targetId, found = 0;
+    Employee emp;
+
+    printf("\nEnter Employee ID to delete: ");
+    scanf("%d", &targetId);
+
+    while (fread(&emp, sizeof(Employee), 1, fp) == 1) {
+        if (emp.id == targetId) {
+            found = 1; // Skip writing this record to temp file
+        } else {
+            fwrite(&emp, sizeof(Employee), 1, tempFp);
+        }
+    }
+
+    fclose(fp);
+    fclose(tempFp);
+
+    if (found) {
+        remove(FILE_NAME);         // Remove old data file
+        rename("temp.dat", FILE_NAME); // Rename temp file to permanent storage
+        printf("Record deleted successfully!\n");
+    } else {
+        remove("temp.dat"); // Delete unused temporary file
+        printf("Employee with ID %d not found.\n", targetId);
+    }
+}
